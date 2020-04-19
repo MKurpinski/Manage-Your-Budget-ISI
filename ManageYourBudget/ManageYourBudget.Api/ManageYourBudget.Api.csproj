@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <LangVersion>7.1</LangVersion>
+    <UserSecretsId>435ee0cb-fe06-4be7-9782-6cd03e8b19e0</UserSecretsId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>0</WarningLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
+    <PackageReference Include="Elasticsearch.Net" Version="6.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Serilog.Exceptions" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ManageYourBudget.Common\ManageYourBudget.Common.csproj" />
+    <ProjectReference Include="..\ManageYourBudget.Configuration\ManageYourBudget.Configuration.csproj" />
+    <ProjectReference Include="..\ManageYourBudget.Dtos\ManageYourBudget.Dtos.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Serilog.Sinks.Elasticsearch">
+      <HintPath>C:\Users\micha\.nuget\packages\serilog.sinks.elasticsearch\6.5.0\lib\netstandard1.3\Serilog.Sinks.Elasticsearch.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
