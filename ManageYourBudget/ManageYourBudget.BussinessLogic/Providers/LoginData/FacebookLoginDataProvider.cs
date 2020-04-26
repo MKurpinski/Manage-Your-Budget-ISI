@@ -33,7 +33,7 @@ namespace ManageYourBudget.BussinessLogic.Providers.LoginData
             return result;
         }
 
-        public string GetRedirectUrl()
+        public string GetRedirectUrl(string _)
         {
             return string.Empty;
         }

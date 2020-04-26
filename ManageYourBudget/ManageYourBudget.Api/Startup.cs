@@ -1,14 +1,15 @@
 ﻿using System;
 using ManageYourBudget.Api.Attributes;
 using ManageYourBudget.Configuration;
-using ManageYourBudget.DataAccess;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Exceptions;
+using Serilog.Sinks.Elasticsearch;
 
 namespace ManageYourBudget.Api
 {
@@ -17,6 +18,7 @@ namespace ManageYourBudget.Api
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            SetUpElasticSearch();
         }
 
         public IConfiguration Configuration { get; }
@@ -33,6 +35,7 @@ namespace ManageYourBudget.Api
             services.EnableIdentity();
             services.EnableAuth(Configuration);
             services.EnableMapping();
+            services.EnableDistrubutedMemoryCache(Configuration);
             return DependencyInjectionConfiguration.Configure(services);
         }
 
@@ -42,13 +45,21 @@ namespace ManageYourBudget.Api
             app.UseConfiguredCors();
             app.UseConfiguredAuth();
             app.UseHttpsRedirection();
-            if (!env.IsDevelopment())
-            {
-                var context = app.ApplicationServices.GetService<BudgetContext>();
-                context.Database.Migrate();
-            }
             loggerFactory.EnableSerilog();
             app.UseMvc();
+        }
+
+        private void SetUpElasticSearch()
+        {
+            var elasticUri = Configuration["ElasticConfiguration:Uri"];
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithExceptionDetails()
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticUri))
+                {
+                    AutoRegisterTemplate = true,
+                })
+                .CreateLogger();
         }
     }
 }

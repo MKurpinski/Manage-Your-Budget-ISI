@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ManageYourBudget.Common;
@@ -44,6 +46,43 @@ namespace ManageYourBudget.BussinessLogic.ExternalAbstractions
         public async Task<User> GetByAsync(Expression<Func<User, bool>> predicate)
         {
             return await _userManager.Users.FirstOrDefaultAsync(predicate);
+        }
+
+        public Task<IdentityResult> ChangePasswordAsync(User user, string password, string newPassword)
+        {
+            return _userManager.ChangePasswordAsync(user, password, newPassword);
+        }
+
+        public Task<IdentityResult> AddPasswordAsync(User user, string password)
+        {
+            return _userManager.AddPasswordAsync(user, password);
+        }
+
+        public Task<IdentityResult> UpdateAsync(User user)
+        {
+            return _userManager.UpdateAsync(user);
+        }
+
+        public async Task<ICollection<User>> Search(string searchTerm, int toSkipEntries, int batchSize, string userId)
+        {
+            searchTerm = string.IsNullOrWhiteSpace(searchTerm) ? null : $"{searchTerm.ToLower()}%";
+            var sqlSearchTerm = new SqlParameter("@searchTerm", searchTerm);
+            if (searchTerm == null)
+            {
+                sqlSearchTerm.Value = DBNull.Value;
+            }
+            var sqlUserId = new SqlParameter("@currentUserId", userId);
+            var sqlBatchSize = new SqlParameter("@batchSize", batchSize + 1);
+            var sqltoSkip = new SqlParameter("@toSkip", toSkipEntries);
+
+            return await _userManager.Users
+                .FromSql("exec budget_SearchUsers @searchTerm, @currentUserId, @batchSize, @toSkip", sqlSearchTerm, sqlUserId, sqlBatchSize, sqltoSkip)
+                .ToListAsync();
+        }
+
+        public string HashPassword(User user, string password)
+        {
+            return _userManager.PasswordHasher.HashPassword(user, password);
         }
     }
 }

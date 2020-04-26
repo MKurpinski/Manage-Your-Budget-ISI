@@ -12,7 +12,7 @@ namespace ManageYourBudget.Configuration
                 .Configure<JwtTokenOptions>(opts => config.GetSection(nameof(JwtTokenOptions)).Bind(opts))
                 .Configure<GoogleOptions>(opts => config.GetSection(nameof(GoogleOptions)).Bind(opts))
                 .Configure<FacebookOptions>(opts => config.GetSection(nameof(FacebookOptions)).Bind(opts))
-                .Configure<ClientOptions>(opts => config.GetSection(nameof(ClientOptions)).Bind(opts));
+                .Configure<PasswordResetOptions>(opts => config.GetSection(nameof(PasswordResetOptions)).Bind(opts));
         }
     }
 }

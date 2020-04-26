@@ -13,7 +13,7 @@ namespace ManageYourBudget.Configuration
         public static IServiceCollection EnableDatabase(this IServiceCollection services, IConfiguration config)
         {
             return services.AddDbContext<BudgetContext>(options =>
-                options.UseSqlServer(config.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+                options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
         }
     }
 }

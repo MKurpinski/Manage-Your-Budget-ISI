@@ -3,7 +3,8 @@ using Autofac.Extensions.DependencyInjection;
 using ManageYourBudget.BussinessLogic.ExternalAbstractions;
 using ManageYourBudget.BussinessLogic.Interfaces;
 using ManageYourBudget.BussinessLogic.Providers;
-using ManageYourBudget.Common.Enums;
+using ManageYourBudget.BussinessLogic.Providers.LoginData;
+using ManageYourBudget.DataAccess.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ManageYourBudget.Configuration
@@ -13,12 +14,11 @@ namespace ManageYourBudget.Configuration
         public static AutofacServiceProvider Configure(IServiceCollection services)
         {
             var builder = new ContainerBuilder();
+            builder.RegisterRepositories();
             builder.RegisterServices();
             builder.RegisterProviders();
             builder.RegisterExternalAbstractions();
-
             builder.Populate(services);
-
             return new AutofacServiceProvider(builder.Build());
         }
         public static void RegisterServices(this ContainerBuilder builder)
@@ -34,6 +34,19 @@ namespace ManageYourBudget.Configuration
         public static void RegisterProviders(this ContainerBuilder builder)
         {
             builder.RegisterAssemblyTypes(typeof(IProvider).Assembly).AsImplementedInterfaces().InstancePerLifetimeScope();
+        }
+
+        public static void RegisterLoginDataProviders(this ContainerBuilder builder)
+        {
+            builder.RegisterType<FacebookLoginDataProvider>().As<ILoginDataProvider>();
+            builder.RegisterType<GoogleLoginDataProvider>().As<ILoginDataProvider>();
+            builder.RegisterType<LoginDataProviderFactory>().As<ILoginDataProviderFactory>();
+        }
+
+        private static void RegisterRepositories(this ContainerBuilder builder)
+        {
+            builder.RegisterAssemblyTypes(typeof(IRepository).Assembly).AsImplementedInterfaces().InstancePerLifetimeScope();
+
         }
     }
 }

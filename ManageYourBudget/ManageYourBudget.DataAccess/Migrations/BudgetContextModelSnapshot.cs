@@ -15,7 +15,7 @@ namespace ManageYourBudget.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.14-servicing-32113")
+                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -62,6 +62,10 @@ namespace ManageYourBudget.DataAccess.Migrations
 
                     b.Property<int>("RegisteredWith");
 
+                    b.Property<string>("ResetPasswordHash");
+
+                    b.Property<DateTime?>("ResetPasswordHashExpirationTime");
+
                     b.Property<string>("SecurityStamp");
 
                     b.Property<bool>("TwoFactorEnabled");
@@ -80,6 +84,54 @@ namespace ManageYourBudget.DataAccess.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("ManageYourBudget.DataAccess.Models.UserWallet", b =>
+                {
+                    b.Property<string>("UserId");
+
+                    b.Property<int>("WalletId");
+
+                    b.Property<bool>("Archived");
+
+                    b.Property<DateTime>("Created");
+
+                    b.Property<DateTime?>("LastOpened");
+
+                    b.Property<DateTime>("Modified");
+
+                    b.Property<int>("Role");
+
+                    b.HasKey("UserId", "WalletId");
+
+                    b.HasIndex("WalletId");
+
+                    b.ToTable("UserWallets");
+                });
+
+            modelBuilder.Entity("ManageYourBudget.DataAccess.Models.Wallet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Archived");
+
+                    b.Property<int>("Category");
+
+                    b.Property<DateTime>("Created");
+
+                    b.Property<string>("CreatorId");
+
+                    b.Property<int>("DefaultCurrency");
+
+                    b.Property<DateTime>("Modified");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Wallets");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -190,6 +242,19 @@ namespace ManageYourBudget.DataAccess.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("ManageYourBudget.DataAccess.Models.UserWallet", b =>
+                {
+                    b.HasOne("ManageYourBudget.DataAccess.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ManageYourBudget.DataAccess.Models.Wallet", "Wallet")
+                        .WithMany()
+                        .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

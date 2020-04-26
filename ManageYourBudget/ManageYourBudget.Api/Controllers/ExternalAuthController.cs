@@ -32,7 +32,8 @@ namespace ManageYourBudget.Api.Controllers
         [ProducesResponseType(typeof(Result), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ExternalLoginGoogle([FromBody] GoogleLoginDto externalLoginDto)
         {
-            var result = await _externalLoginService.LoginGoogle(externalLoginDto);
+            var userIp = Request.HttpContext.Connection.RemoteIpAddress;
+            var result = await _externalLoginService.LoginGoogle(externalLoginDto, userIp);
             return HandleExternalLoginResult(result);
         }
 
@@ -40,7 +41,8 @@ namespace ManageYourBudget.Api.Controllers
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetGoogleRedirectLogin()
         {
-            var redirectUri = _externalLoginService.GetRedirectUrl();
+            var userIp = Request.HttpContext.Connection.RemoteIpAddress;
+            var redirectUri = _externalLoginService.GetRedirectUrl(userIp);
             return Ok(redirectUri);
         }
 

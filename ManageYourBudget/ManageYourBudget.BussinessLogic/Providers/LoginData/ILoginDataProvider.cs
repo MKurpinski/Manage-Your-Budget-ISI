@@ -9,7 +9,7 @@ namespace ManageYourBudget.BussinessLogic.Providers.LoginData
     {
         LoginProvider Type { get; }
         Task<ExternalRegisterUserDto> GetExternalData(IExternalDataDto externalData);
-        string GetRedirectUrl();
+        string GetRedirectUrl(string ip);
         string GetLogoutUri();
     }
 }

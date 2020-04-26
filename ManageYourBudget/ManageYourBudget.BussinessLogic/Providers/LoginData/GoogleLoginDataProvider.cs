@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityModel.Client;
 using ManageYourBudget.BussinessLogic.ExternalAbstractions;
+using ManageYourBudget.BussinessLogic.Interfaces;
 using ManageYourBudget.Common.Constants;
 using ManageYourBudget.Common.Enums;
 using ManageYourBudget.Dtos.Auth;
@@ -16,10 +17,12 @@ namespace ManageYourBudget.BussinessLogic.Providers.LoginData
     public class GoogleLoginDataProvider : ILoginDataProvider
     {
         private readonly IGoogleClient _googleClient;
+        private readonly ICacheService _cacheService;
 
-        public GoogleLoginDataProvider(IGoogleClient googleClient)
+        public GoogleLoginDataProvider(IGoogleClient googleClient, ICacheService cacheService)
         {
             _googleClient = googleClient;
+            _cacheService = cacheService;
         }
 
         public LoginProvider Type => LoginProvider.Google;
@@ -31,7 +34,7 @@ namespace ManageYourBudget.BussinessLogic.Providers.LoginData
             }
             var tokenResponse = await _googleClient.RequestAuthorizationCodeAsync(googleExternalData.LoginDto.Code);
 
-            var validatedToken = await ValidateOpenIdToken(tokenResponse);
+            var validatedToken = await ValidateOpenIdToken(tokenResponse, googleExternalData.LoginDto.State, googleExternalData.Ip);
 
             if (!validatedToken)
             {
@@ -40,9 +43,10 @@ namespace ManageYourBudget.BussinessLogic.Providers.LoginData
             return await CreateExternalRegisterUserDto(tokenResponse);
         }
 
-        public string GetRedirectUrl()
+        public string GetRedirectUrl(string ip)
         {
             var state = Guid.NewGuid().ToString("N");
+            _cacheService.SetState(ip, state);
             return _googleClient.GetRedirectUrl(state);
         }
 
@@ -81,13 +85,14 @@ namespace ManageYourBudget.BussinessLogic.Providers.LoginData
             };
         }
 
-        private async Task<bool> ValidateOpenIdToken(TokenResponse tokenResponse)
+        private async Task<bool> ValidateOpenIdToken(TokenResponse tokenResponse, string state, IPAddress ip)
         {
-            if (tokenResponse.IsError)
+            if (tokenResponse.IsError ||
+                !state.Equals(await _cacheService.GetState(ip.ToString()), StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }
-            return await _googleClient.ValidateToken(tokenResponse.IdentityToken);
+            return await _googleClient.ValidateToken(tokenResponse.AccessToken);
         }
     }
 }

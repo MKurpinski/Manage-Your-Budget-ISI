@@ -11,6 +11,10 @@ namespace ManageYourBudget.DataAccess.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string PictureSrc { get; set; }
+        public string ResetPasswordHash { get; set; }
+        public DateTime? ResetPasswordHashExpirationTime { get; set; }
         public LoginProvider RegisteredWith { get; set; }
+
+        public bool HasLocalAccount() => PasswordHash == null;
     }
 }

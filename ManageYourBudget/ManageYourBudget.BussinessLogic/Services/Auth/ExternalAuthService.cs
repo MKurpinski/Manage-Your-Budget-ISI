@@ -35,9 +35,9 @@ namespace ManageYourBudget.BussinessLogic.Services.Auth
             return await Login(userData, LoginProvider.Facebook);
         }
 
-        public string GetRedirectUrl()
+        public string GetRedirectUrl(IPAddress userIp)
         {
-            return _loginDataProviderFactory.Create(LoginProvider.Google).GetRedirectUrl();
+            return _loginDataProviderFactory.Create(LoginProvider.Google).GetRedirectUrl(userIp.ToString());
         }
 
         public LogoutDto Logout(ClaimsPrincipal claimsPrincipal)
@@ -58,10 +58,10 @@ namespace ManageYourBudget.BussinessLogic.Services.Auth
             };
         }
 
-        public async Task<Result<TokenDto>> LoginGoogle(GoogleLoginDto googleLoginDto)
+        public async Task<Result<TokenDto>> LoginGoogle(GoogleLoginDto googleLoginDto, IPAddress userIp)
         {
             var loginProvider = _loginDataProviderFactory.Create(LoginProvider.Google);
-            var userData = await loginProvider.GetExternalData(new GoogleExternalDataDto { LoginDto = googleLoginDto});
+            var userData = await loginProvider.GetExternalData(new GoogleExternalDataDto { LoginDto = googleLoginDto, Ip = userIp });
             return await Login(userData, LoginProvider.Google);
         }
 

@@ -32,7 +32,7 @@ namespace ManageYourBudget.Configuration
         private static TokenValidationParameters CreateTokenValidationParameters(IConfiguration configuration)
         {
             var jwtTokenOptions = new JwtTokenOptions();
-            configuration.GetSection(nameof(JwtTokenOptions)).Bind(jwtTokenOptions);
+            configuration.GetSection("JwtToken").Bind(jwtTokenOptions);
 
             return new TokenValidationParameters
             {
