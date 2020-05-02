@@ -6,7 +6,6 @@ using ManageYourBudget.Common.Enums;
 using ManageYourBudget.Common.Extensions;
 using ManageYourBudget.DataAccess.Interfaces;
 using ManageYourBudget.DataAccess.Models;
-using ManageYourBudget.Dtos.Wallet;
 using ManageYourBudget.Dtos.Wallet.Assignment;
 
 namespace ManageYourBudget.BussinessLogic.Services
@@ -14,12 +13,14 @@ namespace ManageYourBudget.BussinessLogic.Services
     public class AssignmentUserToWalletService : IAssignmentUserToWalletService
     {
         private readonly IWalletRepository _walletRepository;
+        private readonly IEmailService _emailService;
         private readonly IUserManager _userManager;
 
-        public AssignmentUserToWalletService(IWalletRepository walletRepository, IUserManager userManager)
+        public AssignmentUserToWalletService(IWalletRepository walletRepository, IUserManager userManager, IEmailService emailService)
         {
             _walletRepository = walletRepository;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         public async Task<Result> AssignUserToWallet(AssignUserToWalletDto assignUserToWalletDto, string modifierId)
@@ -32,6 +33,7 @@ namespace ManageYourBudget.BussinessLogic.Services
             var deobfustacedId = assignUserToWalletDto.WalletId.ToDeobfuscated();
             var userWallet = await _walletRepository.Get(deobfustacedId, assignUserToWalletDto.UserId, true);
 
+            _emailService.SendAssignmentEmail(assignUserToWalletDto, true, modifierId, string.Empty);
             if (userWallet == null)
             {
                 return await NewlyAssignUser(deobfustacedId, assignUserToWalletDto.UserId);
@@ -54,6 +56,7 @@ namespace ManageYourBudget.BussinessLogic.Services
             {
                 return Result.Failure();
             }
+            _emailService.SendAssignmentEmail(assignUserToWalletDto, false, modifierId, userWallet.Wallet.Name);
             return await ChangeUserAssignment(userWallet, WalletRole.InActive);
         }
 
@@ -78,7 +81,6 @@ namespace ManageYourBudget.BussinessLogic.Services
         {
             userWallet.Role = role;
             await _walletRepository.Update(userWallet);
-            //TODO Send Email
             return Result.Success();
         }
 
@@ -91,7 +93,6 @@ namespace ManageYourBudget.BussinessLogic.Services
                 WalletId = walletId
             };
             await _walletRepository.Add(userWallet);
-            //TODO Send Email
             return Result.Success();
         }
 

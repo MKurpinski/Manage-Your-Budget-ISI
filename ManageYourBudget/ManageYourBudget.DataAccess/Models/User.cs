@@ -15,6 +15,6 @@ namespace ManageYourBudget.DataAccess.Models
         public DateTime? ResetPasswordHashExpirationTime { get; set; }
         public LoginProvider RegisteredWith { get; set; }
 
-        public bool HasLocalAccount() => PasswordHash == null;
+        public bool HasLocalAccount() => PasswordHash != null;
     }
 }

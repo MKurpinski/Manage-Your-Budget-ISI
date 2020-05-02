@@ -10,16 +10,20 @@ using ManageYourBudget.Common.Extensions;
 using ManageYourBudget.DataAccess.Interfaces;
 using ManageYourBudget.DataAccess.Models;
 using ManageYourBudget.Dtos.Wallet;
+using ManageYourBudget.EmailMessages;
+using ManageYourBudget.EmailService;
 
 namespace ManageYourBudget.BussinessLogic.Services
 {
     public class WalletService : BaseService, IWalletService
     {
         private readonly IWalletRepository _walletRepository;
+        private readonly IEmailService _emailService;
 
-        public WalletService(IMapper mapper, IWalletRepository walletRepository) : base(mapper)
+        public WalletService(IMapper mapper, IWalletRepository walletRepository, IEmailService emailService) : base(mapper)
         {
             _walletRepository = walletRepository;
+            _emailService = emailService;
         }
 
         public async Task<Result<string>> CreateWallet(AddWalletDto addWalletDto, string userId)
@@ -87,7 +91,7 @@ namespace ManageYourBudget.BussinessLogic.Services
             }
 
             var result = userWallet.Role == WalletRole.AllPrivileges
-                ? await ArchiveWholeWallet(userWallet)
+                ? await ArchiveWholeWallet(userWallet, userId)
                 : await ArchiveOnlyUserWallet(userWallet);
 
             return result;
@@ -100,12 +104,12 @@ namespace ManageYourBudget.BussinessLogic.Services
             return result == 0 ? Result.Failure() : Result.Success();
         }
 
-        private async Task<Result> ArchiveWholeWallet(UserWallet userWallet)
+        private async Task<Result> ArchiveWholeWallet(UserWallet userWallet, string userId)
         {
             var wallet = userWallet.Wallet;
             wallet.Archived = true;
             var result = await _walletRepository.Update(wallet);
-            //TODO Send notification
+            _emailService.SendWalletArchivedEmail(userId, wallet);
             return result == 0 ? Result.Failure() : Result.Success();
         }
     }

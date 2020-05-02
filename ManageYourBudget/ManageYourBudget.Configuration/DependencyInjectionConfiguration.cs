@@ -5,6 +5,7 @@ using ManageYourBudget.BussinessLogic.Interfaces;
 using ManageYourBudget.BussinessLogic.Providers;
 using ManageYourBudget.BussinessLogic.Providers.LoginData;
 using ManageYourBudget.DataAccess.Interfaces;
+using ManageYourBudget.EmailService;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ManageYourBudget.Configuration
@@ -23,6 +24,7 @@ namespace ManageYourBudget.Configuration
         }
         public static void RegisterServices(this ContainerBuilder builder)
         {
+            builder.RegisterType<EmailService.EmailSenderService>().As<IEmailSenderService>();
             builder.RegisterAssemblyTypes(typeof(IService).Assembly).AsImplementedInterfaces().InstancePerLifetimeScope();
         }
 
@@ -34,13 +36,6 @@ namespace ManageYourBudget.Configuration
         public static void RegisterProviders(this ContainerBuilder builder)
         {
             builder.RegisterAssemblyTypes(typeof(IProvider).Assembly).AsImplementedInterfaces().InstancePerLifetimeScope();
-        }
-
-        public static void RegisterLoginDataProviders(this ContainerBuilder builder)
-        {
-            builder.RegisterType<FacebookLoginDataProvider>().As<ILoginDataProvider>();
-            builder.RegisterType<GoogleLoginDataProvider>().As<ILoginDataProvider>();
-            builder.RegisterType<LoginDataProviderFactory>().As<ILoginDataProviderFactory>();
         }
 
         private static void RegisterRepositories(this ContainerBuilder builder)

@@ -32,7 +32,7 @@ namespace ManageYourBudget.DataAccess.Repositories
 
         public async Task<UserWallet> Get(int id, string userId, bool includeInActive = false)
         {
-            return await Context.UserWallets.Include(x => x.Wallet)
+            return await Context.UserWallets.Include(x => x.Wallet).ThenInclude(x => x.UserWallets).ThenInclude(x => x.User)
                 .FirstOrDefaultAsync(x => x.WalletId == id && x.UserId == userId && !x.Archived && !x.Wallet.Archived && (x.Role != WalletRole.InActive || includeInActive));
         }
 

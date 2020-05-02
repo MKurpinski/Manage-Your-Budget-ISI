@@ -5,6 +5,8 @@ using ManageYourBudget.BussinessLogic.Interfaces;
 using ManageYourBudget.Common;
 using ManageYourBudget.DataAccess.Models;
 using ManageYourBudget.Dtos.Auth;
+using ManageYourBudget.EmailMessages;
+using ManageYourBudget.EmailService;
 using ManageYourBudget.Options;
 using Microsoft.Extensions.Options;
 
@@ -13,11 +15,13 @@ namespace ManageYourBudget.BussinessLogic.Services
     public class PasswordResetService: IPasswordResetService
     {
         private readonly IUserManager _userManager;
+        private readonly IEmailService _emailService;
         private readonly PasswordResetOptions _passwordResetOptions;
 
-        public PasswordResetService(IUserManager userManager, IOptions<PasswordResetOptions> passwordResetOptionsAccessor)
+        public PasswordResetService(IUserManager userManager, IOptions<PasswordResetOptions> passwordResetOptionsAccessor, IEmailService emailService)
         {
             _userManager = userManager;
+            _emailService = emailService;
             _passwordResetOptions = passwordResetOptionsAccessor.Value;
         }
 
@@ -29,15 +33,12 @@ namespace ManageYourBudget.BussinessLogic.Services
                 return;
             }
 
-            if (!user.HasLocalAccount())
-            {
-                //ToDo Send email
-                return;
-            }
-
             var hash = RandomHashGenerator.RandomHash;
-            await SaveUserResetPasswordData(user, hash);
-            //ToDo Send email
+            if (user.HasLocalAccount())
+            {
+                await SaveUserResetPasswordData(user, hash);
+            }
+            _emailService.SendResetPasswordEmail(user.Email, user.HasLocalAccount(), hash);
         }
 
         public async Task<Result> ResetPassword(ResetPasswordDto resetPasswordDto)

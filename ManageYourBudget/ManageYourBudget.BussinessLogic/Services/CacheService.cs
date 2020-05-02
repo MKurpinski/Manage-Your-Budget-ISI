@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using ManageYourBudget.BussinessLogic.Interfaces;
@@ -29,6 +32,32 @@ namespace ManageYourBudget.BussinessLogic.Services
             var state = await Get(key);
             await _cache.RemoveAsync(key);
             return state;
+        }
+
+        public async Task<T> Get<T>(string key)
+        {
+            var entry = await _cache.GetAsync(key);
+            if (entry == null || entry.Length == 0)
+            {
+                return default(T);
+            }
+            using (var ms = new MemoryStream(entry))
+            {
+                IFormatter br = new BinaryFormatter();
+                return (T)br.Deserialize(ms);
+            }
+        }
+
+        public async Task Set<T>(string key, T value)
+        {
+            using (var stream = new MemoryStream())
+            {
+                IFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(stream, value);
+                var cacheEntryOptions = new DistributedCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromHours(1));
+                await _cache.SetAsync(key, stream.ToArray(), cacheEntryOptions);
+            }
         }
 
         private async Task Set(string key, string entry)

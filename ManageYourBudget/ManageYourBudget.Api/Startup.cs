@@ -1,6 +1,7 @@
 ﻿using System;
 using ManageYourBudget.Api.Attributes;
 using ManageYourBudget.Configuration;
+using ManageYourBudget.EmailService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,7 @@ namespace ManageYourBudget.Api
             services.EnableOptions(Configuration);
             services.EnableDatabase(Configuration);
             services.EnableIdentity();
+            services.EnableSendingEmails(Configuration);
             services.EnableAuth(Configuration);
             services.EnableMapping();
             services.EnableDistrubutedMemoryCache(Configuration);

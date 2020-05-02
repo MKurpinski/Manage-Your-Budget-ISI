@@ -7,5 +7,7 @@ namespace ManageYourBudget.BussinessLogic.Interfaces
     {
         Task SetState(string ip, string state);
         Task<string> GetState(string ip);
+        Task<T> Get<T>(string key);
+        Task Set<T>(string key, T value);
     }
 }

@@ -1,4 +1,5 @@
-﻿using ManageYourBudget.Common.Enums;
+﻿using System.Collections.Generic;
+using ManageYourBudget.Common.Enums;
 
 namespace ManageYourBudget.DataAccess.Models
 {
@@ -8,6 +9,7 @@ namespace ManageYourBudget.DataAccess.Models
         public string CreatorId { get; set; }
         public string Name { get; set; }
         public bool Archived { get; set; }
+        public IList<UserWallet> UserWallets { get; set; }
         public WalletCategory Category { get; set; }
         public SupportedCurrencies DefaultCurrency { get; set; }
     }

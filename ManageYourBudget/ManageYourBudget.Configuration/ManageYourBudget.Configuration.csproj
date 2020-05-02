@@ -22,6 +22,7 @@
     <ProjectReference Include="..\ManageYourBudget.BussinessLogic\ManageYourBudget.BussinessLogic.csproj" />
     <ProjectReference Include="..\ManageYourBudget.Common\ManageYourBudget.Common.csproj" />
     <ProjectReference Include="..\ManageYourBudget.DataAccess\ManageYourBudget.DataAccess.csproj" />
+    <ProjectReference Include="..\ManageYourBudget.EmailService\ManageYourBudget.EmailService.csproj" />
     <ProjectReference Include="..\ManageYourBudget.Options\ManageYourBudget.Options.csproj" />
   </ItemGroup>
 </Project>
