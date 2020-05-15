@@ -1,0 +1,43 @@
+@import "./common.scss";
+
+.auth-container {
+  display: flex;
+  background: url("/manage-your-budget.jpg") no-repeat center;
+  background-size: cover;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  .auth-button {
+    margin-bottom: 5px !important;
+    margin-top: 5px !important;
+    border-radius: 10px !important;
+  }
+
+  .auth-title {
+    display: flex;
+    justify-content: center;
+    font-size: 40px;
+  }
+
+  .form-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 40vw;
+    @media only screen and (max-width: $phone) {
+      width: 90vw;
+    }
+    @media only screen and (max-width: $tablet) and (min-width: $phone) {
+      width: 70vw;
+    }
+  }
+
+  .form-wrapper--card {
+    padding: 24px;
+  }
+
+  .wallet-icon {
+    padding-left: 10px;
+  }
+}

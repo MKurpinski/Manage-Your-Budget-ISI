@@ -1,46 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types'
-import axios from 'axios';
-
-import authProvider from './authProvider';
-import { BASE_URL } from './constants';
 import { withRouter } from 'react-router-dom';
+import baseApi from './api/baseApi';
+import { toastrService } from './common';
 
 class App extends Component {
-    constructor(){
+    constructor() {
         super();
-
-        axios.interceptors.response.use(
-            response => response,
-            error => {
-                switch (error.response.status) {
-                    case 401:
-                        authProvider.removeToken();
-                        this.props.history.push('/login');
-                        break;
-                    default:
-                        break;
-                }
-                return Promise.reject(error);
-            }
-        );
-
-        axios.interceptors.request.use(config => {
-            const token = authProvider.getToken();
-            config.headers.Authorization =
-                token && config.url.startsWith(BASE_URL)
-                    ? `Bearer ${token}`
-                    : '';
-            return config;
-        });
+        baseApi.init();
+        toastrService.init()
     }
-  render() {
-    return (
-        <div>
-            {this.props.children}
-        </div>
-    );
-  }
+
+    render() {
+        return (
+            <div id="app">
+                <span className="preload-handler"/>
+                {this.props.children}
+            </div>
+        );
+    }
 }
 
 App.propTypes = {

@@ -3,7 +3,7 @@ import { routerMiddleware } from 'react-router-redux';
 import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
 import createHistory from 'history/createBrowserHistory';
 import rootReducer from '../reducers';
-import { IS_PRODUCTION } from '../constants';
+import { IS_PRODUCTION } from '../common/constants';
 
 export const history = createHistory();
 

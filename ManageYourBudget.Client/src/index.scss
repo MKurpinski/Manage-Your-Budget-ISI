@@ -1,5 +1,31 @@
-body {
+@import '../node_modules/toastr/toastr';
+@import '../node_modules/semantic-ui-css/semantic.min.css';
+
+body, #app, #root, .page-container {
   margin: 0;
   padding: 0;
+  width: 100%;
+  min-height: 100vh;
   font-family: sans-serif;
+}
+
+.error-message {
+  min-height: 25px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+.custom-spinner {
+  animation: custom-spinner-rotate infinite 3s linear;
+}
+
+.preload-handler {
+  background: url("/manage-your-budget.jpg");
+  display: none;
+}
+
+@keyframes custom-spinner-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
