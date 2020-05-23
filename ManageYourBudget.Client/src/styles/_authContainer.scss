@@ -14,12 +14,6 @@
     border-radius: 10px !important;
   }
 
-  .auth-title {
-    display: flex;
-    justify-content: center;
-    font-size: 40px;
-  }
-
   .form-wrapper {
     display: flex;
     flex-direction: column;
@@ -31,13 +25,5 @@
     @media only screen and (max-width: $tablet) and (min-width: $phone) {
       width: 70vw;
     }
-  }
-
-  .form-wrapper--card {
-    padding: 24px;
-  }
-
-  .wallet-icon {
-    padding-left: 10px;
   }
 }

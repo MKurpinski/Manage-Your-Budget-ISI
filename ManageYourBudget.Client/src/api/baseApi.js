@@ -11,7 +11,7 @@ const axiosConfig = () => {
             switch (error.response.status) {
                 case 401:
                     authProvider.removeToken();
-                    this.props.history.push('/login');
+                    window.location.href = '/';
                     break;
                 default:
                     break;

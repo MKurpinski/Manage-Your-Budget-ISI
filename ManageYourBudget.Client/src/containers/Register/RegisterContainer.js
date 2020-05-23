@@ -6,8 +6,8 @@ import { routesConstants } from '../../routing';
 import { withRouter } from 'react-router-dom';
 import RegisterForm from '../../components/Register/registerForm';
 import { toastrService } from '../../common';
-import './RegisterContainer.scss';
 import { Card } from 'semantic-ui-react';
+import Titled from '../../components/Titled/titled';
 
 const REGISTER_FORM = 'registerForm';
 
@@ -29,15 +29,17 @@ class RegisterContainer extends React.Component {
 
     render() {
         return (
-            <div className="page-container auth-container">
-                <div className="form-wrapper">
-                    <Card centered className="form-wrapper--card" fluid>
-                        <h1 className="auth-title">Join us! <i
-                            className="wallet-icon money bill alternate outline icon"/></h1>
-                        <RegisterForm onSubmit={this.handleSubmit}/>
-                    </Card>
+            <Titled title='Register'>
+                <div className="page-container auth-container">
+                    <div className="form-wrapper">
+                        <Card centered className="form-wrapper--card" fluid>
+                            <h1 className="auth-title">Join us! <i
+                                className="wallet-icon money bill alternate outline icon"/></h1>
+                            <RegisterForm onSubmit={this.handleSubmit}/>
+                        </Card>
+                    </div>
                 </div>
-            </div>
+            </Titled>
         )
     }
 }

@@ -1,0 +1,16 @@
+.navigation {
+  height: 100vh !important;
+
+  .custom-sidebar-mobile {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    max-width: 70vw;
+  }
+
+  .main-header {
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+}

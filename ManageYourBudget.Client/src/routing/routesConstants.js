@@ -4,5 +4,7 @@ export default {
     MAIN: '/main',
     START_RESET: '/reset',
     RESET: '/reset/:hash',
-    GOOGLE: '/google'
+    GOOGLE: '/google',
+    PROFILE: '/main/profile',
+    WALLET: '/main/wallet'
 }

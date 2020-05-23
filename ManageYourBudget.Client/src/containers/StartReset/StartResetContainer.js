@@ -6,9 +6,9 @@ import { withRouter } from 'react-router-dom';
 import { resetPasswordApi } from '../../api';
 import { toastrService } from '../../common';
 import StartResetForm from '../../components/StartReset/startResetForm';
-import './StartResetContainer.scss'
 import { Card, Divider } from 'semantic-ui-react';
 import { LinkAsButton } from '../../components/common/buttons';
+import Titled from '../../components/Titled/titled';
 
 const START_RESET_FROM = 'start_reset_form';
 
@@ -29,18 +29,20 @@ class StartResetContainer extends React.Component {
 
     render() {
         return (
-            <div className="page-container auth-container">
-                <div className="form-wrapper">
-                    <Card centered className="form-wrapper--card" fluid>
-                        <h1 className="auth-title">Forgot password?</h1>
-                        <StartResetForm onSubmit={this.handleSubmit}/>
-                        <Divider horizontal>Or</Divider>
-                        <LinkAsButton to={routesConstants.LOGIN} className="fluid secondary">
-                            Cancel and return to login!
-                        </LinkAsButton>
-                    </Card>
+            <Titled title='Forgot password'>
+                <div className="page-container auth-container">
+                    <div className="form-wrapper">
+                        <Card centered className="form-wrapper--card" fluid>
+                            <h1 className="auth-title">Forgot password?</h1>
+                            <StartResetForm onSubmit={this.handleSubmit}/>
+                            <Divider horizontal>Or</Divider>
+                            <LinkAsButton to={routesConstants.LOGIN} className="fluid secondary">
+                                Cancel and return to login!
+                            </LinkAsButton>
+                        </Card>
+                    </div>
                 </div>
-            </div>
+            </Titled>
         )
     }
 }

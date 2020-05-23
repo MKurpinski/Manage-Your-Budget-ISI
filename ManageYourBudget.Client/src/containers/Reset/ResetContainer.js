@@ -7,12 +7,13 @@ import { withRouter } from 'react-router-dom';
 import { toastrService } from '../../common';
 import authProvider from '../../authProvider';
 import ResetForm from '../../components/Reset/resetForm';
-import CustomSpiner from '../../components/common/customSpiner';
+import CustomSpiner from '../../components/common/customSpinner';
 import { Card } from 'semantic-ui-react';
+import Titled from '../../components/Titled/titled';
 
 const RESET_FORM = 'resetForm';
 
-class RegisterContainer extends React.Component {
+class ResetContainer extends React.Component {
     state = {
         hash: '',
         hashValidated: false
@@ -50,17 +51,19 @@ class RegisterContainer extends React.Component {
 
     render() {
         return (
-            <div className="page-container auth-container">
-                <div className="form-wrapper">
-                    <Card centered className="form-wrapper--card" fluid>
-                        <h1 className="auth-title">Reset password</h1>
-                        <ResetForm onSubmit={this.handleSubmit}/>
-                    </Card>
+            <Titled title='Reset password'>
+                <div className="page-container auth-container">
+                    <div className="form-wrapper">
+                        <Card centered className="form-wrapper--card" fluid>
+                            <h1 className="auth-title">Reset password</h1>
+                            <ResetForm onSubmit={this.handleSubmit}/>
+                        </Card>
+                    </div>
+                    <CustomSpiner active={!this.state.hashValidated}/>
                 </div>
-                <CustomSpiner active={!this.state.hashValidated}/>
-            </div>
+            </Titled>
         )
     }
 }
 
-export default connect()(withRouter(RegisterContainer))
+export default connect()(withRouter(ResetContainer))

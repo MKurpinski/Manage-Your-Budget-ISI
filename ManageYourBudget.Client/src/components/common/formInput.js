@@ -8,12 +8,13 @@ const FormInput = ({
                        label,
                        type,
                        icon,
+                       disabled,
                        meta: {touched, error, warning}
                    }) => (
     <div>
         <label>{label}</label>
         <div>
-            <Input size="large" fluid icon={icon} iconPosition={icon && 'left'} error={touched && error} {...input}
+            <Input disabled={disabled} size="large" fluid icon={icon} iconPosition={icon && 'left'} error={touched && !!error} {...input}
                    placeholder={placeholder} type={type}/>
             <div className="error-message">
                 {touched &&

@@ -4,7 +4,7 @@ import { authApi } from '../../api';
 import { toastrService } from '../../common';
 import authProvider from '../../authProvider';
 import { routesConstants } from '../../routing';
-import CustomSpiner from '../../components/common/customSpiner';
+import CustomSpiner from '../../components/common/customSpinner';
 
 class GoogleCallbackContainer extends React.Component {
 

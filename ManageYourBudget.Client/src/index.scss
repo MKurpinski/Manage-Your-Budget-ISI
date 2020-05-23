@@ -1,5 +1,6 @@
 @import '../node_modules/toastr/toastr';
 @import '../node_modules/semantic-ui-css/semantic.min.css';
+@import 'styles/common.scss';
 
 body, #app, #root, .page-container {
   margin: 0;
@@ -15,7 +16,6 @@ body, #app, #root, .page-container {
   justify-content: flex-end;
 }
 
-
 .custom-spinner {
   animation: custom-spinner-rotate infinite 3s linear;
 }
@@ -26,6 +26,39 @@ body, #app, #root, .page-container {
 }
 
 @keyframes custom-spinner-rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.wallet-icon {
+  padding-left: 10px;
+}
+
+.no-border-radius {
+  border-radius: 0 !important;
+}
+
+.form-wrapper--card {
+  padding: 24px !important;
+}
+
+.auth-title {
+  display: flex;
+  justify-content: center;
+  font-size: 40px;
+}
+
+.full-height {
+  height: 100%;
+}
+
+.centered-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

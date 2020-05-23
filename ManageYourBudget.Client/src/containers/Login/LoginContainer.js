@@ -10,10 +10,11 @@ import { toastrService } from '../../common';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import { constants } from '../../common';
 import { IconButton, SimpleLink } from '../../components/common/buttons';
-import { Button, Card } from 'semantic-ui-react'
+import { Button, Card } from 'semantic-ui-react';
 import { Divider } from 'semantic-ui-react';
 import './LoginContainer.css'
-import CustomSpiner from '../../components/common/customSpiner';
+import CustomSpiner from '../../components/common/customSpinner';
+import Titled from '../../components/Titled/titled';
 
 const LOGIN_FORM = 'loginForm';
 
@@ -72,36 +73,40 @@ class LoginContainer extends React.Component {
 
     render() {
         return (
-            <div className="page-container auth-container login-container">
-                <div className="form-wrapper">
-                    <Card centered className="form-wrapper--card" fluid>
-                    <h1 className="auth-title">Login <i className="wallet-icon money bill alternate outline icon"/></h1>
-                    <LoginForm onSubmit={this.handleSubmit}/>
-                    <div className="link-section">
-                        <SimpleLink to={routesConstants.START_RESET}>Forgot password?</SimpleLink>
-                        <SimpleLink to={routesConstants.REGISTER}>New account?</SimpleLink>
+            <Titled title='Login'>
+                <div className="page-container auth-container login-container">
+                    <div className="form-wrapper">
+                        <Card centered className="form-wrapper--card" fluid>
+                            <h1 className="auth-title">Login <i
+                                className="wallet-icon money bill alternate outline icon"/></h1>
+                            <LoginForm onSubmit={this.handleSubmit}/>
+                            <div className="link-section">
+                                <SimpleLink to={routesConstants.START_RESET}>Forgot password?</SimpleLink>
+                                <SimpleLink to={routesConstants.REGISTER}>New account?</SimpleLink>
+                            </div>
+                            <Divider horizontal>Or</Divider>
+                            <Button.Group vertical>
+                                <FacebookLogin
+                                    appId={constants.FACEBOOK_APP_ID}
+                                    callback={this.handleFacebookLogin}
+                                    isMobile={false}
+                                    render={renderProps => (
+                                        <IconButton
+                                            iconName="facebook"
+                                            className="auth-button"
+                                            onClick={renderProps.onClick}>
+                                            Facebook
+                                        </IconButton>
+                                    )}
+                                />
+                                <IconButton className="auth-button" iconName="google plus"
+                                            onClick={this.handleGoogleLogin}>Google</IconButton>
+                            </Button.Group>
+                        </Card>
                     </div>
-                    <Divider horizontal>Or</Divider>
-                    <Button.Group vertical>
-                        <FacebookLogin
-                            appId={constants.FACEBOOK_APP_ID}
-                            callback={this.handleFacebookLogin}
-                            render={renderProps => (
-                                <IconButton
-                                    iconName="facebook"
-                                    className="auth-button"
-                                    onClick={renderProps.onClick}>
-                                    Facebook
-                                </IconButton>
-                            )}
-                        />
-                        <IconButton className="auth-button" iconName="google plus"
-                                    onClick={this.handleGoogleLogin}>Google</IconButton>
-                    </Button.Group>
-                    </Card>
+                    <CustomSpiner active={this.state.isLoading}/>
                 </div>
-                <CustomSpiner active={this.state.isLoading}/>
-            </div>
+            </Titled>
         )
     }
 
