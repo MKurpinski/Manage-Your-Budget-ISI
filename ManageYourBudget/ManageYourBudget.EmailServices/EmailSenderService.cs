@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using FluentEmail.Core;
-using ManageYourBudget.EmailMessages;
+using Shared.Events;
 
 namespace ManageYourBudget.EmailService
 {
@@ -27,7 +27,7 @@ namespace ManageYourBudget.EmailService
             {
                 client.To(message.To).Subject(message.Subject).UsingTemplateFromEmbedded(
                     $"ManageYourBudget.EmailService.Views.{message.Type}.cshtml", message,
-                    message.GetType().GetTypeInfo().Assembly).Send();
+                    GetType().GetTypeInfo().Assembly).Send();
             });
         }
 

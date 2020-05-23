@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
+    <PackageReference Include="RawRabbit.DependencyInjection.ServiceCollection" Version="2.0.0-rc5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.configuration.abstractions\2.1.1\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <HintPath>C:\Users\micha\.nuget\packages\microsoft.extensions.dependencyinjection.abstractions\1.0.2\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="RawRabbit">
+      <HintPath>C:\Users\micha\.nuget\packages\rawrabbit\2.0.0-rc5\lib\netstandard1.5\RawRabbit.dll</HintPath>
+    </Reference>
+    <Reference Include="RawRabbit.DependencyInjection.ServiceCollection">
+      <HintPath>C:\Users\micha\.nuget\packages\rawrabbit.dependencyinjection.servicecollection\2.0.0-rc5\lib\netstandard1.5\RawRabbit.DependencyInjection.ServiceCollection.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

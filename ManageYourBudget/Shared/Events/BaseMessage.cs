@@ -1,6 +1,6 @@
-﻿namespace ManageYourBudget.EmailMessages
+﻿namespace ManageYourBudget.Shared.Events
 {
-    public abstract class BaseMessage
+    public abstract class BaseMessage: ISendEmailEvent
     {
         public string Subject { get; set; }
         public string To { get; set; }

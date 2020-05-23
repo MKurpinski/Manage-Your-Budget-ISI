@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ManageYourBudget.EmailMessages
+﻿namespace ManageYourBudget.Shared.Events
 {
     public class WalletArchivedMessage: BaseMessage
     {

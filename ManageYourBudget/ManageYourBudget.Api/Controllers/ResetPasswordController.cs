@@ -36,7 +36,7 @@ namespace ManageYourBudget.Api.Controllers
             return NoContent();
         }
 
-        [HttpPost, Route("validate")]
+        [HttpPost, Route("validate/{hash}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ValidatePasswordResetHash(string hash)

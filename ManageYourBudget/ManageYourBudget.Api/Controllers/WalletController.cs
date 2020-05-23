@@ -3,12 +3,13 @@ using System.Net;
 using System.Threading.Tasks;
 using ManageYourBudget.BussinessLogic.Interfaces;
 using ManageYourBudget.Dtos.Wallet;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManageYourBudget.Api.Controllers
 {
     [Route("api/wallet")]
-    //[Authorize]
+    [Authorize]
     public class WalletController: BaseController
     {
         private readonly IWalletService _walletService;

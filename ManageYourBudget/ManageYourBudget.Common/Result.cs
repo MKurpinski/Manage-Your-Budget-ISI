@@ -34,10 +34,14 @@ namespace ManageYourBudget.Common
         public bool Succedeed { get; set; }
         public IDictionary<string, string> Errors { get; set; }
 
-        protected Result(bool success, IDictionary<string, string> errors)
+        public Result(bool success, IDictionary<string, string> errors)
         {
             Succedeed = success;
             Errors = errors;
+        }
+
+        public Result()
+        {
         }
 
         public static Result Failure(IDictionary<string, string> errors = default)

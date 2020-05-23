@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ManageYourBudget.Api.Controllers
 {
     [Authorize]
+    [Route("api/profile")]
     public class ProfileController : BaseController
     {
         private readonly IProfileService _profileService;

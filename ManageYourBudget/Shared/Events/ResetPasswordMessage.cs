@@ -1,4 +1,4 @@
-﻿namespace ManageYourBudget.EmailMessages
+﻿namespace ManageYourBudget.Shared.Events
 {
     public class ResetPasswordMessage : BaseMessage
     {

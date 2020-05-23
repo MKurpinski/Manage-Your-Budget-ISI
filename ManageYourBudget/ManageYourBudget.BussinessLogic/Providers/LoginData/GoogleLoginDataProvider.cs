@@ -92,7 +92,7 @@ namespace ManageYourBudget.BussinessLogic.Providers.LoginData
             {
                 return false;
             }
-            return await _googleClient.ValidateToken(tokenResponse.AccessToken);
+            return await _googleClient.ValidateToken(tokenResponse.IdentityToken);
         }
     }
 }

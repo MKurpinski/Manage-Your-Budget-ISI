@@ -1,37 +1,32 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using ManageYourBudget.BussinessLogic.EventDispatchers.Interfaces;
 using ManageYourBudget.BussinessLogic.ExternalAbstractions;
 using ManageYourBudget.BussinessLogic.Interfaces;
 using ManageYourBudget.DataAccess.Models;
 using ManageYourBudget.Dtos.Wallet.Assignment;
-using ManageYourBudget.EmailMessages;
-using ManageYourBudget.EmailService;
 using ManageYourBudget.Options;
+using ManageYourBudget.Shared.Events;
 using Microsoft.Extensions.Options;
 
 namespace ManageYourBudget.BussinessLogic.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly IEmailSenderService _emailSender;
+        private readonly IEventDispatcher<ISendEmailEvent> _emailDispatcher;
         private readonly IUserManager _userManager;
         private readonly PasswordResetOptions _passwordResetOptions;
         private readonly ClientOptions _clientOptions;
 
         public EmailService(IOptions<PasswordResetOptions> passwordResetOptionsAccessor,
             IUserManager userManager,
+            IEventDispatcher<ISendEmailEvent> emailDispatcher,
             IOptions<ClientOptions> clientOptionsAccessor)
         {
             _userManager = userManager;
+            _emailDispatcher = emailDispatcher;
             _clientOptions = clientOptionsAccessor.Value;
             _passwordResetOptions = passwordResetOptionsAccessor.Value;
-        }
-        public EmailService(IEmailSenderService emailSender, IUserManager userManager, ClientOptions clientOptions)
-        {
-            _emailSender = emailSender;
-            _userManager = userManager;
-            _clientOptions = clientOptions;
         }
 
         public void SendResetPasswordEmail(string email, bool canBeReset, string hash = null)
@@ -43,7 +38,7 @@ namespace ManageYourBudget.BussinessLogic.Services
                 Subject = "Password reset",
                 Link = $"{_passwordResetOptions.Url}/{hash}"
             };
-            _emailSender.SendEmail(resetPasswordMessage);
+            _emailDispatcher.Dispatch(resetPasswordMessage);
         }
 
         public void SendWalletArchivedEmail(string userId, Wallet wallet)
@@ -60,7 +55,7 @@ namespace ManageYourBudget.BussinessLogic.Services
                         By = $"{modifier?.FirstName} {modifier?.LastName}",
                         WalletName = wallet.Name
                     };
-                    _emailSender.SendEmail(message);
+                    _emailDispatcher.Dispatch(message);
                 }
             });
         }
@@ -80,7 +75,7 @@ namespace ManageYourBudget.BussinessLogic.Services
                     By = by,
                     Link = $"{_clientOptions.WalletUrl}/{assignUserToWalletDto.WalletId}"
                 };
-                _emailSender.SendEmail(assigment ? message : GetUnnassignMessage(message, walletName));
+                _emailDispatcher.Dispatch(assigment ? message : GetUnnassignMessage(message, walletName));
             });
         }
 

@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using ManageYourBudget.BussinessLogic.EventDispatchers.Interfaces;
 using ManageYourBudget.BussinessLogic.ExternalAbstractions;
 using ManageYourBudget.BussinessLogic.Interfaces;
 using ManageYourBudget.BussinessLogic.Providers;
-using ManageYourBudget.BussinessLogic.Providers.LoginData;
 using ManageYourBudget.DataAccess.Interfaces;
 using ManageYourBudget.EmailService;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,15 +16,16 @@ namespace ManageYourBudget.Configuration
         {
             var builder = new ContainerBuilder();
             builder.RegisterRepositories();
+            builder.RegisterDispatchers();
             builder.RegisterServices();
             builder.RegisterProviders();
             builder.RegisterExternalAbstractions();
             builder.Populate(services);
+
             return new AutofacServiceProvider(builder.Build());
         }
         public static void RegisterServices(this ContainerBuilder builder)
         {
-            builder.RegisterType<EmailService.EmailSenderService>().As<IEmailSenderService>();
             builder.RegisterAssemblyTypes(typeof(IService).Assembly).AsImplementedInterfaces().InstancePerLifetimeScope();
         }
 
@@ -36,6 +37,11 @@ namespace ManageYourBudget.Configuration
         public static void RegisterProviders(this ContainerBuilder builder)
         {
             builder.RegisterAssemblyTypes(typeof(IProvider).Assembly).AsImplementedInterfaces().InstancePerLifetimeScope();
+        }
+
+        public static void RegisterDispatchers(this ContainerBuilder builder)
+        {
+            builder.RegisterAssemblyTypes(typeof(IEventDispatcher<>).Assembly).AsImplementedInterfaces().InstancePerLifetimeScope();
         }
 
         private static void RegisterRepositories(this ContainerBuilder builder)

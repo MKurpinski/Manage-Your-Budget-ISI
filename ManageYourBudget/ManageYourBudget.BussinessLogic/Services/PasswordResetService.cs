@@ -5,8 +5,6 @@ using ManageYourBudget.BussinessLogic.Interfaces;
 using ManageYourBudget.Common;
 using ManageYourBudget.DataAccess.Models;
 using ManageYourBudget.Dtos.Auth;
-using ManageYourBudget.EmailMessages;
-using ManageYourBudget.EmailService;
 using ManageYourBudget.Options;
 using Microsoft.Extensions.Options;
 

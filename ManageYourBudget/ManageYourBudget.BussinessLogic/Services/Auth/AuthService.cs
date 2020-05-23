@@ -22,7 +22,11 @@ namespace ManageYourBudget.BussinessLogic.Services.Auth
         {
             var user = Mapper.Map<User>(registerUserDto);
             var registrationResult = await UserManager.CreateAsync(user, registerUserDto.Password);
-            return registrationResult.ToResult();
+            return new Result
+            {
+               Succedeed = registrationResult.Succeeded,
+               Errors = registrationResult.Succeeded ? null : new Dictionary<string, string> { { nameof(registerUserDto.Email).ToLower(), "Email is already taken" } }
+            };
         }
 
         public async Task<Result<TokenDto>> Login(LoginUserDto loginUserDto)
@@ -40,7 +44,7 @@ namespace ManageYourBudget.BussinessLogic.Services.Auth
         {
             return Result<TokenDto>.Failure(new Dictionary<string, string>()
             {
-                {"invalid_credentials", "Email or password is incorrect"}
+                {"_error", "Email or password is incorrect"}
             });
         }
     }

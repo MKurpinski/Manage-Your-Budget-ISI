@@ -1,4 +1,5 @@
-﻿using ManageYourBudget.EmailMessages;
+﻿
+using Shared.Events;
 
 namespace ManageYourBudget.EmailService
 {

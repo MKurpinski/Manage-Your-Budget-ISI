@@ -10,8 +10,6 @@ using ManageYourBudget.Common.Extensions;
 using ManageYourBudget.DataAccess.Interfaces;
 using ManageYourBudget.DataAccess.Models;
 using ManageYourBudget.Dtos.Wallet;
-using ManageYourBudget.EmailMessages;
-using ManageYourBudget.EmailService;
 
 namespace ManageYourBudget.BussinessLogic.Services
 {

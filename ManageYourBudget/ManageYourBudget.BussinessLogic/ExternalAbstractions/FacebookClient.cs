@@ -28,7 +28,7 @@ namespace ManageYourBudget.BussinessLogic.ExternalAbstractions
 
         public async Task<FacebookUserDto> GetFacebookUserData(string accessToken)
         {
-            var response = await _httpClient.GetAsync($"{_facebookOptions.BaseUrl}?access_token={accessToken}&{_facebookOptions.Permissions}");
+            var response = await _httpClient.GetAsync($"{_facebookOptions.BaseUrl}{_facebookOptions.ProfileEndpoint}?access_token={accessToken}&{_facebookOptions.Permissions}");
 
             if (!response.IsSuccessStatusCode)
             {
