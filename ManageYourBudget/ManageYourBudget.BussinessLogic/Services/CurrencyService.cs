@@ -19,29 +19,25 @@ namespace ManageYourBudget.BussinessLogic.Services
             _exchangeClient = exchangeClient;
         }
 
-        public async Task<CurrencyRateDto> GetCurrencyRate(SupportedCurrencies baseCurrency, SupportedCurrencies toCurrency, DateTime? at)
+        public async Task<CurrencyRateDto> GetCurrencyRate(SupportedCurrencies baseCurrency, SupportedCurrencies toCurrency)
         {
-            return await GetCurrencyRate(baseCurrency.GetStringValue(), toCurrency.GetStringValue(), at);
+            return await GetCurrencyRate(baseCurrency.GetStringValue(), toCurrency.GetStringValue());
         }
 
-        public async Task<CurrencyRateDto> GetCurrencyRate(string baseCurrency, string toCurrency, DateTime? at)
+        public async Task<CurrencyRateDto> GetCurrencyRate(string baseCurrency, string toCurrency)
         {
-            if (!at.HasValue)
-            {
-                at = DateTime.UtcNow;
-            }
 
-            var key = $"{baseCurrency}-{toCurrency}-{at.Value.ToShortDateString()}";
-            var fromCache = await _cacheService.Get<CurrencyRateDto>(key);
-            if (fromCache != null)
-            {
-                return fromCache;
-            }
+            var key = $"{baseCurrency}-{toCurrency}";
+            //var fromCache = await _cacheService.Get<CurrencyRateDto>(key);
+            //if (fromCache != null)
+            //{
+            //   return fromCache;
+            //}
 
-            var result = await _exchangeClient.GetExchangeRate(baseCurrency, toCurrency, at.Value);
+            var result = await _exchangeClient.GetExchangeRate(baseCurrency, toCurrency);
             if (result != null)
             {
-                await _cacheService.Set(key, result);
+                //await _cacheService.Set(key, result);
             }
             return result;
         }

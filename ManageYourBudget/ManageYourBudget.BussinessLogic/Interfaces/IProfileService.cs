@@ -11,6 +11,6 @@ namespace ManageYourBudget.BussinessLogic.Interfaces
         Task<Result> AddPassword(AddPasswordDto addPasswordDto, string userId);
         Task<UserDto> GetProfile(string userId);
         Task<Result> UpdateProfile(UpdateProfileDto updateProfileDto, string userId);
-        Task<PartialSearchResults<UserDto>> Search(BaseSearchOptionsDto searchOptions, string userId);
+        Task<BaseSearchResults<UserDto>> Search(BaseSearchOptionsDto searchOptions, string userId);
     }
 }

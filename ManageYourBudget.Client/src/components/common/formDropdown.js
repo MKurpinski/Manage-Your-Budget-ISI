@@ -10,13 +10,16 @@ const DropdownField = ({
                            disabled,
                            options,
                            defaultValue,
+                           customOnChange,
                            meta: {touched, error, warning}
                        }) => {
 
     const onChange = (param, data) => {
+        if(customOnChange){
+            customOnChange(data.value);
+        }
         input.onChange(data.value)
     };
-
     return (
         <div>
             <label>{label}</label>
@@ -24,7 +27,6 @@ const DropdownField = ({
                 <Dropdown
                     fluid
                     error={touched && !!error}
-                    size="large"
                     selection {...input}
                     options={options}
                     disabled={disabled}

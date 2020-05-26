@@ -8,7 +8,8 @@ namespace ManageYourBudget.DataAccess.Interfaces
     {
         Task<UserWallet> Add(UserWallet wallet);
         Task<IList<UserWallet>> GetAll(string userId);
+        Task<bool> HasAny(string userId);
         Task<UserWallet> Get(int id, string userId, bool includeInActive = false);
-        Task<int> Update<T>(T wallet) where T : Entity;
+        int Update<T>(T wallet) where T : Entity;
     }
 }

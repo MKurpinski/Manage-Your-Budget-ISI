@@ -6,5 +6,6 @@ export default {
     RESET: '/reset/:hash',
     GOOGLE: '/google',
     PROFILE: '/main/profile',
-    WALLET: '/main/wallet'
+    WALLET: '/main/wallet',
+    FIRST_WALLET: '/main/start'
 }

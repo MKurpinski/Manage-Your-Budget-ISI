@@ -64,7 +64,7 @@ const LeftPanel = ({closePusher}) => {
     };
     return (
         <Fragment>
-            <SimpleLink onClick={closePusher} className="item" to={routesConstants.MAIN}>Main Page</SimpleLink>
+            <SimpleLink onClick={closePusher} className="item" to={routesConstants.WALLET}>New wallet</SimpleLink>
         </Fragment>
     )
 };
@@ -88,8 +88,10 @@ const LogoPanel = ({isSidebar}) => {
     const iconStyles = {paddingLeft: !isSidebar ? '10px' : '0', paddingTop: isSidebar ? '10px' : '0'};
     return (
         <Menu.Item>
-            <span className="main-header">Manage Your Budget</span> <Icon style={iconStyles}
-                                                                          name="money bill alternate outline"/>
+            <SimpleLink to={routesConstants.MAIN}>
+                <span className="main-header">Manage Your Budget</span> <Icon style={iconStyles}
+                                                                              name="money bill alternate outline"/>
+            </SimpleLink>
         </Menu.Item>
     )
 };
@@ -126,14 +128,14 @@ class NavBar extends Component {
                         onLogout={this.onLogout}
                         user={this.props.user}
                     >
-                        <div style={{height: '90vh'}}>
+                        <div style={{minHeight: '90vh'}}>
                             {this.props.children}
                         </div>
                     </NavBarMobile>
                 </Responsive>
                 <Responsive minWidth={TABLET_WIDTH}>
                     <NavBarDesktop user={this.props.user} onLogout={this.onLogout}/>
-                    <div style={{height: '90vh'}}>
+                    <div style={{minHeight: '90vh'}}>
                         {this.props.children}
                     </div>
                 </Responsive>

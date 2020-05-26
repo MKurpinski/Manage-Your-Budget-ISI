@@ -9,29 +9,38 @@ const FormInput = ({
                        type,
                        icon,
                        disabled,
+                       prepareValue,
                        meta: {touched, error, warning}
-                   }) => (
-    <div>
-        <label>{label}</label>
+                   }) => {
+
+    const customOnChange = (e, v) => {
+        prepareValue = prepareValue ? prepareValue : (val) => val;
+        input.onChange(prepareValue(v.value));
+    };
+    return (
         <div>
-            <Input disabled={disabled} size="large" fluid icon={icon} iconPosition={icon && 'left'} error={touched && !!error} {...input}
-                   placeholder={placeholder} type={type}/>
-            <div className="error-message">
-                {touched &&
-                ((error && <div>{error}</div>) ||
-                    (warning && <div>{warning}</div>))}
+            <label>{label}</label>
+            <div>
+                <Input disabled={disabled} fluid icon={icon} iconPosition={icon && 'left'}
+                       error={touched && !!error} {...input} step="0.01"
+                       placeholder={placeholder} type={type} onChange={customOnChange}/>
+                <div className="error-message">
+                    {touched &&
+                    ((error && <div>{error}</div>) ||
+                        (warning && <div>{warning}</div>))}
+                </div>
             </div>
         </div>
-    </div>
-);
+    )
+};
 
 FormInput.propTypes = {
     input: PropTypes.object,
     icon: PropTypes.string,
     placeholder: PropTypes.string,
-    label: PropTypes.string.isRequired,
+    label: PropTypes.any.isRequired,
     meta: PropTypes.object,
-    type: PropTypes.oneOf(['text', 'email', 'password'])
+    type: PropTypes.oneOf(['text', 'email', 'password', 'number'])
 };
 
 export default FormInput;

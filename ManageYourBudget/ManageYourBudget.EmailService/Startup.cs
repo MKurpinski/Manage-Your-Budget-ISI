@@ -40,13 +40,13 @@ namespace ManageYourBudget.EmailService
                 app.UseHsts();
             }
 
+            busClient.SubscribeAsync<UnassignFromWalletMessage>(async message => {
+                await handler.Handle(message);
+            });
             busClient.SubscribeAsync<AssignToWalletMessage>(async message => {
                 await handler.Handle(message);
             });
             busClient.SubscribeAsync<ResetPasswordMessage>(async message => {
-                await handler.Handle(message);
-            });
-            busClient.SubscribeAsync<UnassignFromWalletMessage>(async message => {
                 await handler.Handle(message);
             });
             busClient.SubscribeAsync<WalletArchivedMessage>(async message => {

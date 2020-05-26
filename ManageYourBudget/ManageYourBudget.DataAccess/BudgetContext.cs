@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ManageYourBudget.DataAccess.Models;
+using ManageYourBudget.DataAccess.Models.Expense;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -25,6 +26,8 @@ namespace ManageYourBudget.DataAccess
 
         public DbSet<UserWallet> UserWallets { get; set; }
         public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<Expense> Expenses { get; set; }
+        public DbSet<CyclicExpense> CyclicExpenses { get; set; }
     }
 
     public static class BudgetContextExtensiosn

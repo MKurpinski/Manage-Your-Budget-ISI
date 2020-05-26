@@ -19,9 +19,13 @@ namespace ManageYourBudget.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(CurrencyRateDto), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Get([FromQuery] string currency, [FromQuery] string toCurrency, [FromQuery] DateTime? at)
+        public async Task<IActionResult> Get([FromQuery] string currency, [FromQuery] string toCurrency)
         {
-            var result = await _currencyService.GetCurrencyRate(currency, toCurrency, at);
+            var result = await _currencyService.GetCurrencyRate(currency, toCurrency);
+            if (result == null)
+            {
+                return NotFound();
+            }
             return Ok(result);
         }
     }

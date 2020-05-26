@@ -50,6 +50,11 @@ namespace ManageYourBudget.BussinessLogic.Services
             return mappedResult;
         }
 
+        public async Task<bool> HasAnyWallet(string userId)
+        {
+            return await _walletRepository.HasAny(userId);
+        }
+
         public async Task<Result<ExtendedWalletDto>> GetWallet(string id, string userId)
         {
             var wallet = await _walletRepository.Get(id.ToDeobfuscated(), userId);
@@ -58,17 +63,17 @@ namespace ManageYourBudget.BussinessLogic.Services
                 return Result<ExtendedWalletDto>.Failure();
             }
             wallet.LastOpened = DateTime.UtcNow; ;
-            await _walletRepository.Update(wallet);
+            _walletRepository.Update(wallet);
 
             var mappedWallet = Mapper.Map<ExtendedWalletDto>(wallet);
-
+            mappedWallet.Participants = mappedWallet.Participants.Where(x => x.User.Id != userId && x.Role != WalletRole.InActive.ToString()).ToList();
             return Result<ExtendedWalletDto>.Success(mappedWallet);
         }
 
         public async Task<Result> UpdateWallet(UpdateWalletDto updateWalletDto, string id, string userId)
         {
             var wallet = await _walletRepository.Get(id.ToDeobfuscated(), userId);
-            if (wallet == null || wallet.Role != WalletRole.AllPrivileges)
+            if (wallet == null || !wallet.Role.HasAllPrivileges())
             {
                 return Result<ExtendedWalletDto>.Failure();
             }
@@ -76,7 +81,20 @@ namespace ManageYourBudget.BussinessLogic.Services
             wallet.Wallet.Name = updateWalletDto.Name;
             wallet.Wallet.Category = updateWalletDto.Category.ToEnumValue<WalletCategory>();
 
-            var result = await _walletRepository.Update(wallet.Wallet);
+            var result = _walletRepository.Update(wallet.Wallet);
+            return result == 0 ? Result.Failure() : Result.Success();
+        }
+
+        public async Task<Result> StarWallet(string id, string userId)
+        {
+            var userWallet = await _walletRepository.Get(id.ToDeobfuscated(), userId);
+            if (userWallet == null)
+            {
+                return Result.Failure();
+            }
+
+            userWallet.Favorite = !userWallet.Favorite;
+            var result = _walletRepository.Update(userWallet);
             return result == 0 ? Result.Failure() : Result.Success();
         }
 
@@ -88,25 +106,25 @@ namespace ManageYourBudget.BussinessLogic.Services
                 return Result.Failure();
             }
 
-            var result = userWallet.Role == WalletRole.AllPrivileges
-                ? await ArchiveWholeWallet(userWallet, userId)
-                : await ArchiveOnlyUserWallet(userWallet);
+            var result = userWallet.Role.HasAllPrivileges()
+                ?  ArchiveWholeWallet(userWallet, userId)
+                :  ArchiveOnlyUserWallet(userWallet);
 
             return result;
         }
 
-        private async Task<Result> ArchiveOnlyUserWallet(UserWallet userWallet)
+        private Result ArchiveOnlyUserWallet(UserWallet userWallet)
         {
             userWallet.Archived = true;
-            var result = await _walletRepository.Update(userWallet);
+            var result =  _walletRepository.Update(userWallet);
             return result == 0 ? Result.Failure() : Result.Success();
         }
 
-        private async Task<Result> ArchiveWholeWallet(UserWallet userWallet, string userId)
+        private Result ArchiveWholeWallet(UserWallet userWallet, string userId)
         {
             var wallet = userWallet.Wallet;
             wallet.Archived = true;
-            var result = await _walletRepository.Update(wallet);
+            var result = _walletRepository.Update(wallet);
             _emailService.SendWalletArchivedEmail(userId, wallet);
             return result == 0 ? Result.Failure() : Result.Success();
         }

@@ -5,6 +5,7 @@ import profileApi from './profileApi';
 import resetPasswordApi from './resetPasswordApi';
 import searchApi from './searchApi';
 import walletApi from './walletApi';
+import expenseApi from './expenseApi';
 
 export {
     assignmentToWalletApi,
@@ -13,5 +14,6 @@ export {
     profileApi,
     resetPasswordApi,
     searchApi,
+    expenseApi,
     walletApi
 }

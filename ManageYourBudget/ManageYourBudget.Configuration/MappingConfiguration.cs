@@ -1,12 +1,17 @@
-﻿using AutoMapper;
+﻿using System.Linq;
+using AutoMapper;
 using ManageYourBudget.Common.Enums;
 using ManageYourBudget.Common.Extensions;
 using ManageYourBudget.DataAccess.Models;
+using ManageYourBudget.DataAccess.Models.Expense;
 using ManageYourBudget.Dtos.Auth;
 using ManageYourBudget.Dtos.Auth.LoginDataProvider;
+using ManageYourBudget.Dtos.Expense;
 using ManageYourBudget.Dtos.Profile;
 using ManageYourBudget.Dtos.Wallet;
+using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client.MessagePatterns;
 using Profile = ManageYourBudget.Common.Constants.Profile;
 
 namespace ManageYourBudget.Configuration
@@ -37,6 +42,8 @@ namespace ManageYourBudget.Configuration
                         }
                     });
 
+                opt.CreateMap<UserWallet, WalletParticipantDto>();
+
                 opt.CreateMap<AddWalletDto, Wallet>()
                     .ForMember(dest => dest.Category,
                         opts => opts.MapFrom(src => src.Category.ToEnumValue<WalletCategory>()))
@@ -57,7 +64,16 @@ namespace ManageYourBudget.Configuration
 
 
                 opt.CreateMap<UserWallet, ExtendedWalletDto>()
-                    .IncludeBase<UserWallet, BaseWalletDto>();
+                    .IncludeBase<UserWallet, BaseWalletDto>()
+                    .ForMember(dest => dest.Participants,
+                        opts => opts.MapFrom(src =>
+                            src.Wallet.UserWallets.Where(x => x.UserId != src.UserId)));
+
+                opt.CreateMap<ModifyExpenseDto, Expense>()
+                    .ForMember(dest => dest.WalletId,
+                        opts => opts.MapFrom(src => src.WalletId.ToDeobfuscated()))
+                    .ForMember(dest => dest.Category,
+                        opts => opts.MapFrom(src => src.Category.ToEnumValue<ExpenseCategory>()));
             });
 
         }

@@ -27,9 +27,9 @@ class NewWalletContainer extends React.Component {
 
     render() {
         return (
-            <Titled title="New Wallet">
+            <Titled title={this.props.isNew ? 'First Wallet' : 'New Wallet'}>
                 <div className="centered-column full-height">
-                    <h1 className="auth-title">Create new wallet</h1>
+                    <h1 className="auth-title">{this.props.isNew ? 'Create first wallet' : 'Create new wallet'}</h1>
                     <NewWalletForm onSubmit={this.createWallet}/>
                 </div>
             </Titled>

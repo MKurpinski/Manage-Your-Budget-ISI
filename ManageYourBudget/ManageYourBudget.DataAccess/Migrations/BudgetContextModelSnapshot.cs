@@ -19,6 +19,90 @@ namespace ManageYourBudget.DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("ManageYourBudget.DataAccess.Models.Expense.CyclicExpense", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Category");
+
+                    b.Property<DateTime>("Created");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<DateTime>("LastApplied");
+
+                    b.Property<DateTime>("Modified");
+
+                    b.Property<string>("ModifiedById");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("PeriodType");
+
+                    b.Property<string>("Place");
+
+                    b.Property<decimal>("Price");
+
+                    b.Property<DateTime>("StartingFrom");
+
+                    b.Property<int>("Type");
+
+                    b.Property<int>("WalletId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("WalletId");
+
+                    b.ToTable("CyclicExpenses");
+                });
+
+            modelBuilder.Entity("ManageYourBudget.DataAccess.Models.Expense.Expense", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Category");
+
+                    b.Property<DateTime>("Created");
+
+                    b.Property<string>("CreatedById");
+
+                    b.Property<int?>("CyclicExpenseId");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<DateTime>("Modified");
+
+                    b.Property<string>("ModifiedById");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Place");
+
+                    b.Property<decimal>("Price");
+
+                    b.Property<int>("WalletId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("CyclicExpenseId");
+
+                    b.HasIndex("ModifiedById");
+
+                    b.HasIndex("WalletId");
+
+                    b.ToTable("Expenses");
+                });
+
             modelBuilder.Entity("ManageYourBudget.DataAccess.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -95,6 +179,8 @@ namespace ManageYourBudget.DataAccess.Migrations
                     b.Property<bool>("Archived");
 
                     b.Property<DateTime>("Created");
+
+                    b.Property<bool>("Favorite");
 
                     b.Property<DateTime?>("LastOpened");
 
@@ -244,6 +330,42 @@ namespace ManageYourBudget.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ManageYourBudget.DataAccess.Models.Expense.CyclicExpense", b =>
+                {
+                    b.HasOne("ManageYourBudget.DataAccess.Models.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ManageYourBudget.DataAccess.Models.User", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.HasOne("ManageYourBudget.DataAccess.Models.Wallet", "Wallet")
+                        .WithMany()
+                        .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ManageYourBudget.DataAccess.Models.Expense.Expense", b =>
+                {
+                    b.HasOne("ManageYourBudget.DataAccess.Models.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById");
+
+                    b.HasOne("ManageYourBudget.DataAccess.Models.Expense.CyclicExpense", "CyclicExpense")
+                        .WithMany()
+                        .HasForeignKey("CyclicExpenseId");
+
+                    b.HasOne("ManageYourBudget.DataAccess.Models.User", "ModifiedBy")
+                        .WithMany()
+                        .HasForeignKey("ModifiedById");
+
+                    b.HasOne("ManageYourBudget.DataAccess.Models.Wallet", "Wallet")
+                        .WithMany()
+                        .HasForeignKey("WalletId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("ManageYourBudget.DataAccess.Models.UserWallet", b =>
                 {
                     b.HasOne("ManageYourBudget.DataAccess.Models.User", "User")
@@ -252,7 +374,7 @@ namespace ManageYourBudget.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ManageYourBudget.DataAccess.Models.Wallet", "Wallet")
-                        .WithMany()
+                        .WithMany("UserWallets")
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

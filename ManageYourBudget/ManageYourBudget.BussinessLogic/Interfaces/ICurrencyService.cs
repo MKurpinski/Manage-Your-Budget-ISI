@@ -7,9 +7,8 @@ namespace ManageYourBudget.BussinessLogic.Interfaces
 {
     public interface ICurrencyService: IService
     {
-        Task<CurrencyRateDto> GetCurrencyRate(string baseCurrency, string toCurrency, DateTime? at);
+        Task<CurrencyRateDto> GetCurrencyRate(string baseCurrency, string toCurrency);
 
-        Task<CurrencyRateDto> GetCurrencyRate(SupportedCurrencies baseCurrency, SupportedCurrencies toCurrency,
-            DateTime? at);
+        Task<CurrencyRateDto> GetCurrencyRate(SupportedCurrencies baseCurrency, SupportedCurrencies toCurrency);
     }
 }

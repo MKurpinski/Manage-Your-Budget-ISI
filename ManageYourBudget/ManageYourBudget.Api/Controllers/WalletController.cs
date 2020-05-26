@@ -56,7 +56,7 @@ namespace ManageYourBudget.Api.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Get([FromBody] UpdateWalletDto updateWalletDto, string id)
+        public async Task<IActionResult> Update([FromBody] UpdateWalletDto updateWalletDto, string id)
         {
             var result = await _walletService.UpdateWallet(updateWalletDto, id, UserId);
             if (!result.Succedeed)
@@ -77,6 +77,20 @@ namespace ManageYourBudget.Api.Controllers
             {
                 return BadRequest();
             }
+            return NoContent();
+        }
+
+        [HttpPut("star/{id}")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Star(string id)
+        {
+            var result = await _walletService.StarWallet(id, UserId);
+            if (!result.Succedeed)
+            {
+                return NotFound();
+            }
+
             return NoContent();
         }
     }

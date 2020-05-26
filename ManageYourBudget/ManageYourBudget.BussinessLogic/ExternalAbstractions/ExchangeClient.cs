@@ -14,7 +14,7 @@ namespace ManageYourBudget.BussinessLogic.ExternalAbstractions
 {
     public interface IExchangeClient: IExternalAbstraction
     {
-        Task<CurrencyRateDto> GetExchangeRate(string baseCurrency, string toCurrency, DateTime at);
+        Task<CurrencyRateDto> GetExchangeRate(string baseCurrency, string toCurrency);
     }
 
     public class ExchangeClient : IExchangeClient
@@ -27,8 +27,9 @@ namespace ManageYourBudget.BussinessLogic.ExternalAbstractions
             _exchangeOptions = fixerOptionsAccessor.Value;
         }
 
-        public async Task<CurrencyRateDto> GetExchangeRate(string baseCurrency, string toCurrency, DateTime at)
+        public async Task<CurrencyRateDto> GetExchangeRate(string baseCurrency, string toCurrency)
         {
+            var at = DateTime.Now;
             var stringAt = at.ToString("yyyy-MM-dd");
             var key = $"{baseCurrency}_{toCurrency}";
             var client = _clientFactory.CreateClient();

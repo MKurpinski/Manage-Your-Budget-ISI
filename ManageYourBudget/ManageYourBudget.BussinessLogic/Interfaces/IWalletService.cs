@@ -9,8 +9,10 @@ namespace ManageYourBudget.BussinessLogic.Interfaces
     {
         Task<Result<string>> CreateWallet(AddWalletDto addWalletDto, string userId);
         Task<List<BaseWalletDto>> GetWallets(string userId);
+        Task<bool> HasAnyWallet(string userId);
         Task<Result<ExtendedWalletDto>> GetWallet(string id, string userId);
         Task<Result> UpdateWallet(UpdateWalletDto updateWalletDto, string id, string userId);
+        Task<Result> StarWallet(string id, string userId);
         Task<Result> ArchiveWallet(string id, string userId);
     }
 }

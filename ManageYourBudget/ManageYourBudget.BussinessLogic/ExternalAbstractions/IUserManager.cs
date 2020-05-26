@@ -17,7 +17,7 @@ namespace ManageYourBudget.BussinessLogic.ExternalAbstractions
         Task<IdentityResult> ChangePasswordAsync(User user, string password, string newPassword);
         Task<IdentityResult> AddPasswordAsync(User user, string password);
         Task<IdentityResult> UpdateAsync(User user);
-        Task<ICollection<User>> Search(string searchTerm, int toSkipEntries, int batchSize, string userId);
+        Task<ICollection<User>> Search(string searchTerm, string userId);
         string HashPassword(User user, string password);
     }
 }

@@ -73,7 +73,7 @@ namespace ManageYourBudget.Api.Controllers
 
         [HttpGet("search")]
         [AllowAnonymous]
-        [ProducesResponseType(typeof(PartialSearchResults<UserDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BaseSearchResults<UserDto>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Search([FromQuery] BaseSearchOptionsDto searchOptions)
         {
             var result = await _profileService.Search(searchOptions, UserId);

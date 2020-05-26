@@ -71,22 +71,18 @@ namespace ManageYourBudget.BussinessLogic.Services
                 var message = new AssignToWalletMessage
                 {
                     To = to.Email,
-                    Subject = assigment ? $"${by} shared a wallet with you" : $"{by} unassigned you from wallet {walletName}",
+                    Subject = assigment ? $"{by} shared a wallet with you" : $"{by} unassigned you from wallet {walletName}",
                     By = by,
                     Link = $"{_clientOptions.WalletUrl}/{assignUserToWalletDto.WalletId}"
                 };
+
                 _emailDispatcher.Dispatch(assigment ? message : GetUnnassignMessage(message, walletName));
             });
         }
 
         private UnassignFromWalletMessage GetUnnassignMessage(AssignToWalletMessage message, string walletName)
         {
-            if (!(message is UnassignFromWalletMessage unnassignMessage))
-            {
-                return null;
-            }
-            unnassignMessage.WalletName = walletName;
-            return unnassignMessage;
+            return new UnassignFromWalletMessage(message, walletName);
         }
     }
 }

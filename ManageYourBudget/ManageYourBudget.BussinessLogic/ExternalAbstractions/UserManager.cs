@@ -12,6 +12,7 @@ namespace ManageYourBudget.BussinessLogic.ExternalAbstractions
 {
     public class UserManager : IUserManager
     {
+        private const int SEARCH_BATCH_SIZE = 10;
         private readonly UserManager<User> _userManager;
 
         public UserManager(UserManager<User> userManager)
@@ -63,7 +64,7 @@ namespace ManageYourBudget.BussinessLogic.ExternalAbstractions
             return _userManager.UpdateAsync(user);
         }
 
-        public async Task<ICollection<User>> Search(string searchTerm, int toSkipEntries, int batchSize, string userId)
+        public async Task<ICollection<User>> Search(string searchTerm, string userId)
         {
             searchTerm = string.IsNullOrWhiteSpace(searchTerm) ? null : $"{searchTerm.ToLower()}%";
             var sqlSearchTerm = new SqlParameter("@searchTerm", searchTerm);
@@ -72,11 +73,10 @@ namespace ManageYourBudget.BussinessLogic.ExternalAbstractions
                 sqlSearchTerm.Value = DBNull.Value;
             }
             var sqlUserId = new SqlParameter("@currentUserId", userId);
-            var sqlBatchSize = new SqlParameter("@batchSize", batchSize + 1);
-            var sqltoSkip = new SqlParameter("@toSkip", toSkipEntries);
+            var sqlBatchSize = new SqlParameter("@batchSize", SEARCH_BATCH_SIZE);
 
             return await _userManager.Users
-                .FromSql("exec budget_SearchUsers @searchTerm, @currentUserId, @batchSize, @toSkip", sqlSearchTerm, sqlUserId, sqlBatchSize, sqltoSkip)
+                .FromSql("exec budget_SearchUsers @searchTerm, @currentUserId, @batchSize", sqlSearchTerm, sqlUserId, sqlBatchSize)
                 .ToListAsync();
         }
 

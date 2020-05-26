@@ -10,11 +10,13 @@ const minLength = min => value => value && value.length < min ? `Must be ${min} 
 const maxLength = max => value => value && value.length > max ? `Must be ${max} characters or less` : undefined;
 
 const required = name => value => value ? undefined : `${name} is required!`;
+const biggerThan = (name, greaterThan) => value => value && parseFloat(value) <= greaterThan ? `${name} must be bigger then ${greaterThan}!` : undefined;
 
 export default {
     required,
     maxLength,
     minLength,
     email,
-    compare
+    compare,
+    biggerThan
 }

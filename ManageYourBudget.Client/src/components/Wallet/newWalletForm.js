@@ -1,17 +1,19 @@
 import React from 'react'
-import { Field, reduxForm } from 'redux-form'
+import { Field, getFormValues, reduxForm } from 'redux-form'
 import ValidatedField from '../common/formInput';
 import { validators } from '../../common/index';
-import {SimpleButton} from '../common/buttons';
+import { SimpleButton } from '../common/buttons';
 import DropdownField from '../common/formDropdown';
 import { Grid } from 'semantic-ui-react';
 import { walletHelper } from '../../common';
+import { connect } from 'react-redux';
 
 const nameRequired = validators.required('Name');
 const categoryRequired = validators.required('Category');
 const currencyRequired = validators.required('Default currency');
 
-let NewWalletForm = ({handleSubmit, submitting, invalid}) => {
+let NewWalletForm = ({handleSubmit, submitting, invalid, initialValues, current, isEdit}) => {
+    const dataNotChanged = isEdit && JSON.stringify(initialValues) === JSON.stringify(current);
     return (
         <form onSubmit={handleSubmit} style={{minWidth: '70%'}}>
             <Field
@@ -33,23 +35,35 @@ let NewWalletForm = ({handleSubmit, submitting, invalid}) => {
                 </Grid.Column>
                 <Grid.Column mobile={16} tablet={8} computer={8}>
                     <Field name="currency"
+
                            options={walletHelper.currencies}
                            validate={[currencyRequired]}
                            placeholder="Choose default currency.."
+                           props={{disabled: isEdit}}
                            component={DropdownField}
                            label="Default currency"
                     />
                 </Grid.Column>
             </Grid>
-            <SimpleButton className="fluid primary" disabled={invalid || submitting}>
-                Create wallet!
+            <SimpleButton className="fluid primary" disabled={invalid || submitting || dataNotChanged}>
+                {isEdit ? 'Confirm' : 'Create wallet!'}
             </SimpleButton>
         </form>
     )
 };
 
 NewWalletForm = reduxForm({
-    form: 'newWalletForm'
+    form: 'newWalletForm',
+    enableReinitialize: true
 })(NewWalletForm);
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        initialValues: ownProps.initialValues ? ownProps.initialValues : {},
+        current: getFormValues('newWalletForm')(state)
+    }
+};
+
+NewWalletForm = connect(mapStateToProps)(NewWalletForm);
 
 export default NewWalletForm

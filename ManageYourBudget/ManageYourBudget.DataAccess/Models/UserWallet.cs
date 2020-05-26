@@ -11,6 +11,7 @@ namespace ManageYourBudget.DataAccess.Models
         public virtual User User { get; set; }
         public DateTime? LastOpened { get; set; }
         public bool Archived { get; set; }
+        public bool Favorite { get; set; }
         public WalletRole Role { get; set; }
     }
 }

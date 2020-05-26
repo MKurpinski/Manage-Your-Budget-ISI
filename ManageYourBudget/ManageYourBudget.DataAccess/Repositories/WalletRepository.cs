@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ManageYourBudget.Common.Enums;
 using ManageYourBudget.DataAccess.Interfaces;
@@ -25,9 +26,20 @@ namespace ManageYourBudget.DataAccess.Repositories
         public async Task<IList<UserWallet>> GetAll(string userId)
         {
             return await Context.UserWallets.Include(x => x.Wallet)
-                .Where(x => x.UserId == userId && !x.Archived && !x.Wallet.Archived)
+                .Where(GetWalletPredicate(userId))
                 .OrderByDescending(x => x.LastOpened ?? DateTime.MinValue)
                 .ToListAsync();
+        }
+
+        private Expression<Func<UserWallet, bool>> GetWalletPredicate(string userId)
+        {
+            return x => x.UserId == userId && !x.Archived && !x.Wallet.Archived;
+        }
+
+        public async Task<bool> HasAny(string userId)
+        {
+            return await Context.UserWallets.Include(x => x.Wallet)
+                .AnyAsync(GetWalletPredicate(userId));
         }
 
         public async Task<UserWallet> Get(int id, string userId, bool includeInActive = false)
@@ -36,10 +48,10 @@ namespace ManageYourBudget.DataAccess.Repositories
                 .FirstOrDefaultAsync(x => x.WalletId == id && x.UserId == userId && !x.Archived && !x.Wallet.Archived && (x.Role != WalletRole.InActive || includeInActive));
         }
 
-        public async Task<int> Update<T>(T wallet) where T: Entity
+        public int Update<T>(T wallet) where T: Entity
         {
             Context.UpdateEntity(wallet);
-            return await Context.SaveChangesAsync();
+            return Context.SaveChanges();
         }
     }
 }

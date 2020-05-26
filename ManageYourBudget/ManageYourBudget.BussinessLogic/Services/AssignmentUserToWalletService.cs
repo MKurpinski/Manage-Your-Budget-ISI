@@ -38,7 +38,7 @@ namespace ManageYourBudget.BussinessLogic.Services
             {
                 return await NewlyAssignUser(deobfustacedId, assignUserToWalletDto.UserId);
             }
-            return await ChangeUserAssignment(userWallet, WalletRole.Normal);
+            return ChangeUserAssignment(userWallet, WalletRole.Normal);
         }
 
         public async Task<Result> UnAssignUserFromWallet(UnAssignUserFromWalletDto assignUserToWalletDto, string modifierId)
@@ -57,7 +57,7 @@ namespace ManageYourBudget.BussinessLogic.Services
                 return Result.Failure();
             }
             _emailService.SendAssignmentEmail(assignUserToWalletDto, false, modifierId, userWallet.Wallet.Name);
-            return await ChangeUserAssignment(userWallet, WalletRole.InActive);
+            return ChangeUserAssignment(userWallet, WalletRole.InActive);
         }
 
         public async Task<Result> ChangeUserRole(ChangeUserRoleDto changeUserRoleDto, string modifierId)
@@ -74,13 +74,13 @@ namespace ManageYourBudget.BussinessLogic.Services
             {
                 return Result.Failure();
             }
-            return await ChangeUserAssignment(userWallet, changeUserRoleDto.Role.ToEnumValue<WalletRole>());
+            return ChangeUserAssignment(userWallet, changeUserRoleDto.Role.ToEnumValue<WalletRole>());
         }
 
-        private async Task<Result> ChangeUserAssignment(UserWallet userWallet, WalletRole role)
+        private Result ChangeUserAssignment(UserWallet userWallet, WalletRole role)
         {
             userWallet.Role = role;
-            await _walletRepository.Update(userWallet);
+            _walletRepository.Update(userWallet);
             return Result.Success();
         }
 
@@ -105,7 +105,7 @@ namespace ManageYourBudget.BussinessLogic.Services
             }
 
             var userWalletOfModifier = await _walletRepository.Get(assignUserToWalletDto.WalletId.ToDeobfuscated(), modifierId);
-            if (userWalletOfModifier == null || userWalletOfModifier.Role != WalletRole.AllPrivileges)
+            if (userWalletOfModifier == null || !userWalletOfModifier.Role.HasAllPrivileges())
             {
                 return Result.Failure();
             }

@@ -16,10 +16,12 @@ namespace ManageYourBudget.BussinessLogic.Services
     public class ProfileService: BaseService, IProfileService
     {
         private readonly IUserManager _userManager;
+        private readonly IWalletService _walletService;
 
-        public ProfileService(IUserManager userManager, IMapper mapper) : base(mapper)
+        public ProfileService(IUserManager userManager, IMapper mapper, IWalletService walletService) : base(mapper)
         {
             _userManager = userManager;
+            _walletService = walletService;
         }
 
         public async Task<Result> ChangePassword(ChangePasswordDto changePasswordDto, string userId)
@@ -37,15 +39,12 @@ namespace ManageYourBudget.BussinessLogic.Services
             return await ProfileModificationAction(UpdateProfile, updateProfileDto, userId);
         }
 
-        public async Task<PartialSearchResults<UserDto>> Search(BaseSearchOptionsDto searchOptions, string userId)
+        public async Task<BaseSearchResults<UserDto>> Search(BaseSearchOptionsDto searchOptions, string userId)
         {
-            var toSkipEntries = searchOptions.Batch * searchOptions.Page;
-            var userResults = await _userManager.Search(searchOptions.SearchTerm, toSkipEntries, searchOptions.Batch, userId);
-            var searchResult = new PartialSearchResults<UserDto>
+            var userResults = await _userManager.Search(searchOptions.SearchTerm,  userId);
+            var searchResult = new BaseSearchResults<UserDto>
             {
-                Page = searchOptions.Page + 1,
-                IsMore = userResults.Count > searchOptions.Batch,
-                Results = Mapper.Map<List<UserDto>>(userResults.Take(searchOptions.Batch))
+                Results = Mapper.Map<List<UserDto>>(userResults)
             };
 
             return searchResult;
@@ -54,7 +53,10 @@ namespace ManageYourBudget.BussinessLogic.Services
         public async Task<UserDto> GetProfile(string userId)
         {
             var user = await _userManager.GetByAsync(x => x.Id == userId);
-            return Mapper.Map<UserDto>(user);
+            var hasAnyWallet = await _walletService.HasAnyWallet(userId);
+            var mapped =  Mapper.Map<UserDto>(user);
+            mapped.HasAnyWallet = hasAnyWallet;
+            return mapped;
         }
 
         private async Task<Result> UpdateProfile(UpdateProfileDto updateProfileDto, User user)

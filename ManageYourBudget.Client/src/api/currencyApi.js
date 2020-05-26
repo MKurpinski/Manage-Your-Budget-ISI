@@ -1,5 +1,5 @@
 import baseApi from './baseApi'
 
 export default {
-    get: (currency, toCurrency, at) => baseApi.get('currency', {currency, toCurrency, at})
+    get: (currency, toCurrency) => baseApi.get('currency', {currency, toCurrency})
 }
