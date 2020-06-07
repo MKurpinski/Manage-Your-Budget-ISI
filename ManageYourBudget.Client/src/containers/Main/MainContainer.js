@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux';
 import profileActions from '../../actions';
-import bindActionCreators from 'redux/src/bindActionCreators';
+import { bindActionCreators } from 'redux';
 import { profileApi } from '../../api';
 import Navbar from '../../components/Navigation/Navigation'
 import { Route, withRouter } from 'react-router-dom';

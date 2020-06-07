@@ -49,7 +49,7 @@ namespace ManageYourBudget.BussinessLogic.Services
                 return validationResult;
             }
 
-            var userWallet = await _walletRepository.Get(assignUserToWalletDto.WalletId.ToDeobfuscated(),
+            var userWallet = await _walletRepository.GetWithoutDependencies(assignUserToWalletDto.WalletId.ToDeobfuscated(),
                 assignUserToWalletDto.UserId);
 
             if (userWallet == null)
@@ -68,7 +68,7 @@ namespace ManageYourBudget.BussinessLogic.Services
                 return validationResult;
             }
 
-            var userWallet = await _walletRepository.Get(changeUserRoleDto.WalletId.ToDeobfuscated(),
+            var userWallet = await _walletRepository.GetWithoutDependencies(changeUserRoleDto.WalletId.ToDeobfuscated(),
                 changeUserRoleDto.UserId);
             if (userWallet == null)
             {
@@ -104,7 +104,7 @@ namespace ManageYourBudget.BussinessLogic.Services
                 return Result.Failure();
             }
 
-            var userWalletOfModifier = await _walletRepository.Get(assignUserToWalletDto.WalletId.ToDeobfuscated(), modifierId);
+            var userWalletOfModifier = await _walletRepository.GetWithoutDependencies(assignUserToWalletDto.WalletId.ToDeobfuscated(), modifierId);
             if (userWalletOfModifier == null || !userWalletOfModifier.Role.HasAllPrivileges())
             {
                 return Result.Failure();

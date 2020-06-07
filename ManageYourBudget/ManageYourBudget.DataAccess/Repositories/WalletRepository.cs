@@ -33,7 +33,7 @@ namespace ManageYourBudget.DataAccess.Repositories
 
         private Expression<Func<UserWallet, bool>> GetWalletPredicate(string userId)
         {
-            return x => x.UserId == userId && !x.Archived && !x.Wallet.Archived;
+            return x => x.UserId == userId && !x.Archived && !x.Wallet.Archived && x.Role != WalletRole.InActive;
         }
 
         public async Task<bool> HasAny(string userId)
@@ -45,13 +45,27 @@ namespace ManageYourBudget.DataAccess.Repositories
         public async Task<UserWallet> Get(int id, string userId, bool includeInActive = false)
         {
             return await Context.UserWallets.Include(x => x.Wallet).ThenInclude(x => x.UserWallets).ThenInclude(x => x.User)
-                .FirstOrDefaultAsync(x => x.WalletId == id && x.UserId == userId && !x.Archived && !x.Wallet.Archived && (x.Role != WalletRole.InActive || includeInActive));
+                .FirstOrDefaultAsync(CreateWalletPredicate(id, userId, includeInActive));
         }
+
+        public async Task<UserWallet> GetWithoutDependencies(int id, string userId)
+        {
+            return await Context.UserWallets.Include(x => x.Wallet)
+                .FirstOrDefaultAsync(CreateWalletPredicate(id, userId));
+        }
+
 
         public int Update<T>(T wallet) where T: Entity
         {
             Context.UpdateEntity(wallet);
             return Context.SaveChanges();
         }
+
+        private Expression<Func<UserWallet, bool>> CreateWalletPredicate(int id, string userId, bool includeInActive = false)
+        {
+            return x => x.WalletId == id && x.UserId == userId && !x.Archived && !x.Wallet.Archived &&
+                        (x.Role != WalletRole.InActive || includeInActive);
+        }
+
     }
 }

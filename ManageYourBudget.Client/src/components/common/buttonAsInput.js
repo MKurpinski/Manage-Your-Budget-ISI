@@ -6,9 +6,11 @@ export default class ButtonAsInput extends React.Component{
     const {onClick, value} = this.props;
         return (
             <Button
+                type="button"
                 fluid
+                className="button-no-padding"
                 onClick={onClick}>
-                {value}
+                <p style={{fontSize: '11px'}}>{value}</p>
             </Button>
         )
     }

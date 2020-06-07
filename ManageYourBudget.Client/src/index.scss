@@ -121,6 +121,13 @@ body, #app, #root, .page-container {
   padding-top: 10px;
 }
 
+.button-no-padding {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  display: flex;
+  justify-content: center;
+}
+
 .income {
   background-color: $income !important;
 }

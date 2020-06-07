@@ -4,18 +4,19 @@ import CustomSpiner from '../../components/common/customSpinner';
 import { assignmentToWalletApi, searchApi, walletApi } from '../../api';
 import { withRouter } from 'react-router';
 import EditWalletModal from '../../components/Wallet/editWalletModal';
-import bindActionCreators from 'redux/src/bindActionCreators';
+import { bindActionCreators } from 'redux';
 import profileActions from '../../actions';
 import { connect } from 'react-redux';
 import { startSubmit, stopSubmit } from 'redux-form';
 import { toastrService } from '../../common';
 import walletHelper from '../../common/walletHelper';
 import WalletParticipantsModal from '../../components/Wallet/walletPartipantsModal';
-import ExpenseWrapper from '../../components/Expense/expenseWrapper';
+import ExpenseWrapper from '../../components/Expense/ExpenseWrapper';
 import { helpers } from '../../common/index';
 import queryString from 'query-string'
 import WalletMenu from '../../components/Menu/walletMenu';
 import { FORMS } from '../../common/constants';
+import ChartContainer from '../Chart/chartContainer';
 
 class WalletContainer extends React.Component {
     state = {
@@ -24,6 +25,7 @@ class WalletContainer extends React.Component {
         menuOpened: false,
         isEditModalOpened: false,
         isPartipantsModalOpened: false,
+        isChartModalOpened: false,
         isCyclicExpensesModalOpened: false,
         searchResults: {
             results: [],
@@ -54,6 +56,7 @@ class WalletContainer extends React.Component {
     toggleMenu = this.toggleModal('menuOpened');
     toggleParticipantsModal = this.toggleModal('isPartipantsModalOpened');
     toggleCyclicExpenseModalModal = this.toggleModal('isCyclicExpensesModalOpened');
+    toggleChartModal = this.toggleModal('isChartModalOpened');
 
     searchPeople = async (searchTerm) => {
         const searchResults = await searchApi.searchUsers({searchTerm});
@@ -212,7 +215,8 @@ class WalletContainer extends React.Component {
     createMenu = () => {
         const menu = [
             <div onClick={this.toggleParticipantsModal}>People</div>,
-            <div onClick={this.toggleCyclicExpenseModalModal}>Cyclic expenses</div>
+            <div onClick={this.toggleCyclicExpenseModalModal}>Cyclic operations</div>,
+            <div onClick={this.toggleChartModal}>Charts</div>
         ];
         if (walletHelper.hasAllPrivileges(this.state.wallet.role)) {
             menu.unshift(<div onClick={this.toggleEditModal}>Modify</div>)
@@ -242,6 +246,7 @@ class WalletContainer extends React.Component {
                             onExpenseSearch={this.onExpenseSearch}
                             onExpenseUpdated={this.onExpenseUpdated}
                             walletId={this.state.wallet.id}
+                            walletRole={this.state.wallet.role}
                             onAdded={this.onExpenseAdded}
                             expenses={this.state.expenses}
                             isCyclicExpensesModalOpened={this.state.isCyclicExpensesModalOpened}
@@ -264,7 +269,12 @@ class WalletContainer extends React.Component {
                             onAdded={this.onAdded}
                             isOpen={isPartipantsModalOpened}
                             onClose={this.toggleParticipantsModal}/>
-                    </div>
+
+                        {this.state.isChartModalOpened &&
+                        <ChartContainer walletId={this.state.wallet.id}
+                                        isOpen={this.state.isChartModalOpened}
+                                        onClose={this.toggleChartModal}/>
+                        }                    </div>
                     }
                     <CustomSpiner active={!loaded}/>
                 </div>

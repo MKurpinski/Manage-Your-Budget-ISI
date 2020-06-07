@@ -100,5 +100,9 @@ export default {
     expenseTypesSearch: [allType, ...expenseTypes],
     expenseCategoriesSearch: [allType, ...expenseCategories],
     incomeCategoriesSearch: [allType, ...incomeCategories],
-    allType: [allType]
+    allType: [allType],
+    chartTypes: {
+        categoryPie: 'categoryPie',
+        verticalBar: 'verticalBar'
+    }
 }

@@ -70,5 +70,10 @@ namespace ManageYourBudget.DataAccess.Repositories
                     searchTermParam, walletIdParam, dateFromParam, dateToParam, batchSizeParam, toSkipParam, currentUserIdParam,
                     categoryParam, typeParam).ToListAsync();
         }
+
+        public async Task<List<Expense>> GetByDates(DateTime @from, DateTime to, int walletId)
+        {
+            return await Context.Expenses.Where(x => x.WalletId == walletId && x.Date.Date >= from.Date && x.Date.Date <= to.Date).ToListAsync();
+        }
     }
 }

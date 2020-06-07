@@ -20,7 +20,17 @@ namespace ManageYourBudget.Configuration
     {
         public static IServiceCollection EnableMapping(this IServiceCollection services)
         {
-            return services.AddAutoMapper(opt =>
+            return services.AddAutoMapper(CreateMappingExpression());
+        }
+
+        public static MapperConfiguration CreateConfig()
+        {
+            return new MapperConfiguration(CreateMappingExpression());
+        }
+
+        public static Action<IMapperConfigurationExpression> CreateMappingExpression()
+        {
+            return opt =>
             {
                 opt.CreateMap<LocalRegisterUserDto, User>()
                     .ForMember(dest => dest.UserName, opts => opts.MapFrom(src => src.Email))
@@ -107,13 +117,13 @@ namespace ManageYourBudget.Configuration
                     .ForMember(dest => dest.Type,
                         opts => opts.MapFrom(src => src.Type.GetStringValue()))
                     .ForMember(dest => dest.PeriodType,
-                    opts => opts.MapFrom(src => src.PeriodType.GetStringValue()))
-                    .ForMember(dest => dest.NextApplyingDate, opts => opts.MapFrom(src => 
-                            src.StartingFrom.Date >= DateTime.UtcNow.Date || src.LastApplied == default
+                        opts => opts.MapFrom(src => src.PeriodType.GetStringValue()))
+                    .ForMember(dest => dest.NextApplyingDate, opts => opts.MapFrom(src =>
+                        src.StartingFrom.Date >= DateTime.UtcNow.Date || src.LastApplied == default
                             ? src.StartingFrom
                             : DateTimeCalculator.GetNextApplyingDate(src.LastApplied, src.PeriodType)
                     ));
-            });
+            };
         }
     }
 }

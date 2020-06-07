@@ -40,7 +40,7 @@ export default class SingleCyclicExpense extends React.Component {
     render() {
         const {expense, currency} = this.props;
         const classNameToOfRow = expense.type.toLowerCase();
-
+        const hasAllPrivileges = walletHelper.hasAllPrivileges(this.props.walletRole);
         return (
             <Fragment>
                 <ModifyCyclicExpenseModal
@@ -70,25 +70,33 @@ export default class SingleCyclicExpense extends React.Component {
                     <Table.Cell textAlign="center">{expense.category} ({expense.type})</Table.Cell>
                     <Table.Cell textAlign="center">{expense.periodType}</Table.Cell>
                     <Table.Cell textAlign="center">{moment(expense.nextApplyingDate).format(DATE_FORMAT)}</Table.Cell>
+                    {hasAllPrivileges &&
                     <Table.Cell className="row-space-around">
                         <Icon onClick={this.toggleEditing} link name='edit outline'/>
                         <Icon onClick={this.toggleDeleteModal} link name='close'/>
                     </Table.Cell>
+                    }
+
                 </Responsive>
 
                 <Responsive as={Segment} className={classNameToOfRow} {...Responsive.onlyMobile}>
+                    {hasAllPrivileges &&
                     <div className="aligned-right">
-                        <Icon style={{marginBottom: '10px', marginRight: '-5px'}} onClick={this.toggleDeleteModal} link name='close'/>
+                        <Icon style={{marginBottom: '10px', marginRight: '-5px'}} onClick={this.toggleDeleteModal} link
+                              name='close'/>
                     </div>
+                    }
                     {this.renderProp('Name', expense.name)}
                     {this.renderProp('Place', expense.place)}
                     {this.renderProp('Price', `${expense.price.toFixed(2)} ${walletHelper.mapValueCurrencyToString(currency)}`)}
                     {this.renderProp('Category', `${expense.category} (${expense.type})`)}
                     {this.renderProp('Every', expense.periodType)}
                     {this.renderProp('Next applying date', moment(expense.nextApplyingDate).format(DATE_FORMAT))}
+                    {hasAllPrivileges &&
                     <SimpleButton style={{marginTop: '10px'}} fluid onClick={this.toggleEditing}>
                         Edit
                     </SimpleButton>
+                    }
                 </Responsive>
             </Fragment>
         );

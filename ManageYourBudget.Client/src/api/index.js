@@ -7,6 +7,7 @@ import searchApi from './searchApi';
 import walletApi from './walletApi';
 import expenseApi from './expenseApi';
 import cyclicExpenseApi from './cyclicExpenseApi';
+import chartApi from './chartApi';
 
 export {
     assignmentToWalletApi,
@@ -17,5 +18,6 @@ export {
     searchApi,
     expenseApi,
     walletApi,
-    cyclicExpenseApi
+    cyclicExpenseApi,
+    chartApi
 }

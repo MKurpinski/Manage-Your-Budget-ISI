@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoFixture" Version="4.5.0" />
+    <PackageReference Include="FluentAssertions" Version="5.4.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="Moq" Version="4.10.0" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ManageYourBudget.BussinessLogic\ManageYourBudget.BussinessLogic.csproj" />
+    <ProjectReference Include="..\ManageYourBudget.Common\ManageYourBudget.Common.csproj" />
+    <ProjectReference Include="..\ManageYourBudget.Configuration\ManageYourBudget.Configuration.csproj" />
+    <ProjectReference Include="..\ManageYourBudget.DataAccess\ManageYourBudget.DataAccess.csproj" />
+    <ProjectReference Include="..\ManageYourBudget.Dtos\ManageYourBudget.Dtos.csproj" />
+    <ProjectReference Include="..\ManageYourBudget.EmailService\ManageYourBudget.EmailService.csproj" />
+    <ProjectReference Include="..\ManageYourBudget.Jobs\ManageYourBudget.Jobs.csproj" />
+    <ProjectReference Include="..\ManageYourBudget.Options\ManageYourBudget.Options.csproj" />
+    <ProjectReference Include="..\Shared\ManageYourBudget.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

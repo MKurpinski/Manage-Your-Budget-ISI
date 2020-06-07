@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ManageYourBudget.DataAccess.Models.Expense;
 using ManageYourBudget.Dtos.Expense;
@@ -13,5 +14,6 @@ namespace ManageYourBudget.DataAccess.Interfaces
         void DeleteExpense(Expense expense);
         int UpdateExpense(Expense expense);
         Task<List<ExpenseSearchResult>> Search(ExpenseSearchOptionsDto searchOptions, string userId);
+        Task<List<Expense>> GetByDates(DateTime from, DateTime to, int walletId);
     }
 }

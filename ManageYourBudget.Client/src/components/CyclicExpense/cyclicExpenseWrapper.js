@@ -5,6 +5,7 @@ import ResponsiveTable from '../common/responsiveTable';
 import SingleCyclicExpense from './singleCyclicExpense';
 import { toastrService } from '../../common';
 import helpers from '../../common/helpers';
+import walletHelper from '../../common/walletHelper';
 
 export default class CyclicExpenseWrapper extends React.Component {
     state = {
@@ -57,6 +58,7 @@ export default class CyclicExpenseWrapper extends React.Component {
                 downloadCurrency={this.props.downloadCurrency}
                 key={expense.id}
                 expense={expense}
+                walletRole={this.props.walletRole}
                 onExpenseEdited={this.onExpenseEdit}
                 onDelete={this.onExpenseDelete}
                 currency={this.props.currency}/>
@@ -88,7 +90,9 @@ export default class CyclicExpenseWrapper extends React.Component {
                                 <Table.HeaderCell textAlign="center">Category</Table.HeaderCell>
                                 <Table.HeaderCell textAlign="center">Every</Table.HeaderCell>
                                 <Table.HeaderCell textAlign="center">Next app. date</Table.HeaderCell>
+                                {walletHelper.hasAllPrivileges(this.props.walletRole) &&
                                 <Table.HeaderCell/>
+                                }
                             </Table.Row>
                         }
                 >

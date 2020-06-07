@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ManageYourBudget.BussinessLogic.Interfaces;
 using ManageYourBudget.Common;
-using ManageYourBudget.Common.Extensions;
 using ManageYourBudget.DataAccess.Interfaces;
 using ManageYourBudget.DataAccess.Models.Expense;
 using ManageYourBudget.Dtos.Expense;
@@ -13,12 +12,12 @@ namespace ManageYourBudget.BussinessLogic.Services
     public class ExpenseService: BaseService, IExpenseService
     {
         private readonly IExpenseRepository _expenseRepository;
-        private readonly IWalletRepository _walletRepository;
+        private readonly IWalletPermissionService _walletPermissionService;
 
-        public ExpenseService(IExpenseRepository expenseRepository, IMapper mapper, IWalletRepository walletRepository) : base(mapper)
+        public ExpenseService(IExpenseRepository expenseRepository, IMapper mapper, IWalletPermissionService walletPermissionService) : base(mapper)
         {
             _expenseRepository = expenseRepository;
-            _walletRepository = walletRepository;
+            _walletPermissionService = walletPermissionService;
         }
 
         public async Task<Result<BaseExpenseDto>> CreateExpense(BaseModifyExpenseDto modifyExpenseDto, string userId)
@@ -28,8 +27,9 @@ namespace ManageYourBudget.BussinessLogic.Services
                 throw new ArgumentException();
             }
 
-            var userWallet = await _walletRepository.Get(expenseDto.WalletId.ToDeobfuscated(), userId);
-            if (userWallet == null)
+            var hasUserPermission = await _walletPermissionService.HasUserAccess(modifyExpenseDto.WalletId, userId);
+
+            if (!hasUserPermission)
             {
                 return Result<BaseExpenseDto>.Failure();
             }
@@ -58,11 +58,10 @@ namespace ManageYourBudget.BussinessLogic.Services
                 return Result.Failure();
             }
 
-            var userWallet = await _walletRepository.Get(expense.WalletId, userId);
-
-            if (userWallet == null)
+            var hasUserPermission = await _walletPermissionService.HasUserAccess(expense.WalletId, userId);
+            if (!hasUserPermission)
             {
-                return Result.Failure();
+                return Result<BaseExpenseDto>.Failure();
             }
 
             _expenseRepository.DeleteExpense(expense);
@@ -83,15 +82,16 @@ namespace ManageYourBudget.BussinessLogic.Services
                 return Result.Failure();
             }
 
-            var userWallet = await _walletRepository.Get(expenseDto.WalletId.ToDeobfuscated(), userId);
+            var hasUserPermission = await _walletPermissionService.HasUserAccess(expense.WalletId, userId);
 
-            if (userWallet == null)
+            if (!hasUserPermission)
             {
-                return Result.Failure();
+                return Result<BaseExpenseDto>.Failure();
             }
 
             expense.Date = expenseDto.Date;
             expense.Category = expenseDto.Category;
+            expense.Type = expenseDto.Type;
             expense.Name = expenseDto.Name;
             expense.Place = expenseDto.Place;
             expense.Price = expenseDto.Price;

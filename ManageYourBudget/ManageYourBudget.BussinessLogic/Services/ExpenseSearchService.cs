@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using ManageYourBudget.BussinessLogic.Interfaces;
 using ManageYourBudget.Common.Extensions;
 using ManageYourBudget.DataAccess.Interfaces;
 using ManageYourBudget.Dtos.Expense;
@@ -12,21 +13,22 @@ namespace ManageYourBudget.BussinessLogic.Services
     public class ExpenseSearchService: BaseService, IExpenseSearchService
     {
         private readonly IExpenseRepository _expenseRepository;
-        private readonly IWalletRepository _walletRepository;
+        private readonly IWalletPermissionService _walletPermissionService;
 
-        public ExpenseSearchService(IExpenseRepository expenseRepository, IWalletRepository walletRepository, IMapper mapper) : base(mapper)
+        public ExpenseSearchService(IExpenseRepository expenseRepository, IWalletPermissionService walletPermissionService, IMapper mapper) : base(mapper)
         {
             _expenseRepository = expenseRepository;
-            _walletRepository = walletRepository;
+            _walletPermissionService = walletPermissionService;
         }
 
         public async Task<PagedSearchResults<ExpenseDto>> Search(ExpenseSearchOptionsDto searchOptions, string userId)
         {
-            var userWalet = await _walletRepository.Get(searchOptions.WalletId.ToDeobfuscated(), userId);
-            if (userWalet == null)
+            var hasUserAccess = await _walletPermissionService.HasUserAccess(searchOptions.WalletId.ToDeobfuscated(), userId);
+            if (!hasUserAccess)
             {
                 return new PagedSearchResults<ExpenseDto>();
             }
+
             var resultsFromDb = await _expenseRepository.Search(searchOptions, userId);
 
             return new PagedSearchResults<ExpenseDto>

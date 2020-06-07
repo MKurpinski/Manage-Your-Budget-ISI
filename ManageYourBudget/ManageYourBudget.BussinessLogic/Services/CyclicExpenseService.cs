@@ -13,15 +13,14 @@ namespace ManageYourBudget.BussinessLogic.Services
 {
     public class CyclicExpenseService: BaseService, ICyclicExpenseService
     {
-        private readonly IWalletRepository _walletRepository;
+        private readonly IWalletPermissionService _walletPermissionService;
         private readonly ICyclicExpenseRepository _cyclicExpenseRepository;
 
         public CyclicExpenseService(IMapper mapper,
-            IWalletRepository walletRepository,
-            ICyclicExpenseRepository cyclicExpenseRepository) : base(mapper)
+            ICyclicExpenseRepository cyclicExpenseRepository, IWalletPermissionService walletPermissionService) : base(mapper)
         {
-            _walletRepository = walletRepository;
             _cyclicExpenseRepository = cyclicExpenseRepository;
+            _walletPermissionService = walletPermissionService;
         }
 
         public async Task<Result<BaseExpenseDto>> CreateExpense(BaseModifyExpenseDto modifyExpenseDto, string userId)
@@ -30,8 +29,10 @@ namespace ManageYourBudget.BussinessLogic.Services
             {
                 throw new ArgumentException();
             }
-            var userWallet = await _walletRepository.Get(expenseDto.WalletId.ToDeobfuscated(), userId);
-            if (userWallet == null)
+
+            var hasUserPermission = await _walletPermissionService.HasUserAccess(modifyExpenseDto.WalletId, userId);
+
+            if (!hasUserPermission)
             {
                 return Result<BaseExpenseDto>.Failure();
             }
@@ -63,9 +64,9 @@ namespace ManageYourBudget.BussinessLogic.Services
                 return Result.Failure();
             }
 
-            var userWallet = await _walletRepository.Get(expense.WalletId, userId);
+            var hasUserPermission = await _walletPermissionService.HasUserAccess(expense.WalletId, userId);
 
-            if (userWallet == null)
+            if (!hasUserPermission)
             {
                 return Result.Failure();
             }
@@ -88,9 +89,9 @@ namespace ManageYourBudget.BussinessLogic.Services
                 return Result.Failure();
             }
 
-            var userWallet = await _walletRepository.Get(expenseDto.WalletId.ToDeobfuscated(), userId);
+            var hasUserPermission = await _walletPermissionService.HasUserAccess(expense.WalletId, userId);
 
-            if (userWallet == null)
+            if (!hasUserPermission)
             {
                 return Result.Failure();
             }
@@ -110,7 +111,9 @@ namespace ManageYourBudget.BussinessLogic.Services
         public async Task<List<CyclicExpenseDto>> GetAllCyclicExpenses(string walletId, string userId)
         {
             var walletIdDeobfustaded = walletId.ToDeobfuscated();
-            if (await _walletRepository.Get(walletIdDeobfustaded, userId) == null)
+            var hasUserPermission = await _walletPermissionService.HasUserAccess(walletId, userId);
+
+            if (!hasUserPermission)
             {
                 return new List<CyclicExpenseDto>();
             }

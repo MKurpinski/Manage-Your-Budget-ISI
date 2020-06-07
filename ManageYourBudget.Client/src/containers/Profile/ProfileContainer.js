@@ -1,6 +1,6 @@
 import React from 'react';
 import profileActions from '../../actions';
-import bindActionCreators from 'redux/src/bindActionCreators';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import ProfileForm from '../../components/Profile/profileForm';
 import { toastrService } from '../../common';

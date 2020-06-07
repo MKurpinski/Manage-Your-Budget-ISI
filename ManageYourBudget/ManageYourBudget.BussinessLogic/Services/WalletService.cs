@@ -72,7 +72,7 @@ namespace ManageYourBudget.BussinessLogic.Services
 
         public async Task<Result> UpdateWallet(UpdateWalletDto updateWalletDto, string id, string userId)
         {
-            var wallet = await _walletRepository.Get(id.ToDeobfuscated(), userId);
+            var wallet = await _walletRepository.GetWithoutDependencies(id.ToDeobfuscated(), userId);
             if (wallet == null || !wallet.Role.HasAllPrivileges())
             {
                 return Result<ExtendedWalletDto>.Failure();
@@ -87,7 +87,7 @@ namespace ManageYourBudget.BussinessLogic.Services
 
         public async Task<Result> StarWallet(string id, string userId)
         {
-            var userWallet = await _walletRepository.Get(id.ToDeobfuscated(), userId);
+            var userWallet = await _walletRepository.GetWithoutDependencies(id.ToDeobfuscated(), userId);
             if (userWallet == null)
             {
                 return Result.Failure();
@@ -100,7 +100,7 @@ namespace ManageYourBudget.BussinessLogic.Services
 
         public async Task<Result> ArchiveWallet(string id, string userId)
         {
-            var userWallet = await _walletRepository.Get(id.ToDeobfuscated(), userId);
+            var userWallet = await _walletRepository.GetWithoutDependencies(id.ToDeobfuscated(), userId);
             if (userWallet == null)
             {
                 return Result.Failure();

@@ -29,11 +29,9 @@ namespace ManageYourBudget.BussinessLogic.ExternalAbstractions
 
         public async Task<CurrencyRateDto> GetExchangeRate(string baseCurrency, string toCurrency)
         {
-            var at = DateTime.Now;
-            var stringAt = at.ToString("yyyy-MM-dd");
             var key = $"{baseCurrency}_{toCurrency}";
             var client = _clientFactory.CreateClient();
-            var uri = BuildRequestUrl(key, stringAt);
+            var uri = BuildRequestUrl(key);
 
             var response = await client.GetAsync(uri);
 
@@ -44,7 +42,7 @@ namespace ManageYourBudget.BussinessLogic.ExternalAbstractions
 
             var content = await response.Content.ReadAsStringAsync();
             var dynamicData = JObject.Parse(content);
-            var rate = Math.Round(dynamicData[key][stringAt].ToObject<decimal>(), 2);
+            var rate = Math.Round(dynamicData[key].ToObject<decimal>(), 2);
             return new CurrencyRateDto
             {
                 Base = baseCurrency,
@@ -53,9 +51,9 @@ namespace ManageYourBudget.BussinessLogic.ExternalAbstractions
             };
         }
 
-        private string BuildRequestUrl(string key, string at)
+        private string BuildRequestUrl(string key)
         {
-            return $"{_exchangeOptions.BaseUrl}{key}&compact=ultra&date={at}";
+            return string.Format(_exchangeOptions.BaseUrl, key);
         }
     }
 }

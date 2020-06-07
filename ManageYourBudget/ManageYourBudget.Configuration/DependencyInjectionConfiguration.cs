@@ -5,6 +5,7 @@ using ManageYourBudget.BussinessLogic.ExternalAbstractions;
 using ManageYourBudget.BussinessLogic.Factories;
 using ManageYourBudget.BussinessLogic.Interfaces;
 using ManageYourBudget.BussinessLogic.Providers;
+using ManageYourBudget.BussinessLogic.Providers.ChartData;
 using ManageYourBudget.BussinessLogic.Services;
 using ManageYourBudget.Common.Enums;
 using ManageYourBudget.DataAccess.Interfaces;
@@ -28,6 +29,9 @@ namespace ManageYourBudget.Configuration
 
             builder.RegisterType<ExpenseService>().Keyed<IExpenseService>(ExpenseType.Normal);
             builder.RegisterType<CyclicExpenseService>().Keyed<IExpenseService>(ExpenseType.Cyclic);
+
+            builder.RegisterType<CategoryPieChartDataProvider>().Keyed<IChartDataProvider>(ChartType.CategoryPie);
+            builder.RegisterType<VerticalBarChartDataProvider>().Keyed<IChartDataProvider>(ChartType.VerticalBar);
 
             builder.Populate(services);
 

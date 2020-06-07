@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Icon } from 'semantic-ui-react';
 import ModifyExpenseModal from './modifyExpenseModal';
 import { currencyApi, cyclicExpenseApi, expenseApi } from '../../api';
@@ -121,6 +121,7 @@ class ExpenseWrapper extends React.Component {
                     this.props.isCyclicExpensesModalOpened &&
                     <CyclicExpenseWrapper onClose={this.props.toggleCyclicExpenseModal}
                                           isOpen={this.props.isCyclicExpensesModalOpened}
+                                          walletRole={this.props.walletRole}
                                           currency={this.props.defaultCurrency}
                                           downloadCurrency={this.downloadExchangeRate}
                                           walletId={this.props.walletId}/>
@@ -135,12 +136,15 @@ class ExpenseWrapper extends React.Component {
                 <div className="section-padding" style={{display: 'flex', justifyContent: 'flex-end'}}>
                     <p style={{marginTop: '5px'}}>Add</p>
                     <Icon size='big' link name="add circle" onClick={this.toggleAdding}/>
-
-                    <p style={{marginTop: '5px', marginLeft: '5px'}}>Add cyclic</p>
-                    <Icon.Group onClick={this.toggleCyclicAdding} size='big'>
-                        <Icon link name='add circle'/>
-                        <Icon link corner name='repeat'/>
-                    </Icon.Group>
+                    {walletHelper.hasAllPrivileges(this.props.walletRole) &&
+                        <Fragment>
+                            <p style={{marginTop: '5px', marginLeft: '5px'}}>Add cyclic</p>
+                            <Icon.Group onClick={this.toggleCyclicAdding} size='big'>
+                                <Icon link name='add circle'/>
+                                <Icon link corner name='repeat'/>
+                            </Icon.Group>
+                        </Fragment>
+                    }
                 </div>
                 <div className="section-padding">
                     <AdvancedExpenseSearch
