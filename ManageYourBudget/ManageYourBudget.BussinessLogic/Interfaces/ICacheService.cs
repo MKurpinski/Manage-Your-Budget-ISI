@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ManageYourBudget.BussinessLogic.Interfaces
@@ -8,6 +9,6 @@ namespace ManageYourBudget.BussinessLogic.Interfaces
         Task SetState(string ip, string state);
         Task<string> GetState(string ip);
         Task<T> Get<T>(string key);
-        Task Set<T>(string key, T value);
+        Task Set<T>(string key, T value, TimeSpan expirationTime = default);
     }
 }

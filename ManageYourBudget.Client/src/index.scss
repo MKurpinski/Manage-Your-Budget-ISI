@@ -77,7 +77,7 @@ body, #app, #root, .page-container {
 }
 
 .centered-row {
-  display: flex;
+  display: flex !important;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -115,4 +115,24 @@ body, #app, #root, .page-container {
 
 .react-datepicker-wrapper {
   width: 100%;
+}
+
+.section-padding {
+  padding-top: 10px;
+}
+
+.income {
+  background-color: $income !important;
+}
+
+.expense {
+  background-color: $expense !important;
+}
+
+.ui.dimmer {
+  .ui.loader {
+    &:after {
+      border-color: #767676 transparent transparent;
+    }
+  }
 }

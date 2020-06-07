@@ -10,6 +10,7 @@ import StartResetContainer from '../containers/StartReset/StartResetContainer';
 import { Route } from 'react-router-dom';
 import ResetContainer from '../containers/Reset/ResetContainer';
 import GoogleCallbackContainer from '../containers/GoogleCallback/GoogleCallbackContainer';
+import NotFoundContainer from '../containers/NotFound/NotFoundContainer';
 
 export default (
     <App>
@@ -21,6 +22,7 @@ export default (
             <PublicRoute exact path={routesConstants.GOOGLE} component={GoogleCallbackContainer}/>
             <PrivateRoute path={routesConstants.MAIN} component={MainContainer}/>
             <Route path={routesConstants.RESET} component={ResetContainer}/>
+            <Route path="*" component={NotFoundContainer}/>
         </Switch>
     </App>
 );

@@ -12,40 +12,30 @@ export default class WalletParticipantsModal extends React.Component {
         const panes = [
             {
                 menuItem: 'Assigned people',
-                render: () => <AddedParticipants
-                    onEdit={this.onEditInternal}
-                    onDelete={this.onDeleteInternal}
-                    hasAllPrivileges={this.props.hasAllPrivileges}
-                    participants={this.props.participants}/>
+                render: () =>
+                    <AddedParticipants
+                        onEdit={this.props.onEdit}
+                        onDelete={this.props.onDelete}
+                        hasAllPrivileges={this.props.hasAllPrivileges}
+                        participants={this.props.participants}
+                    />
             }
         ];
         if (this.props.hasAllPrivileges) {
             panes.push({
                     menuItem: 'Add people',
-                    render: () => <SearchParticipants onAdded={this.onAdded} started
-                                                      onSearch={this.searchPeople}
-                                                      results={searchResults.results}
-                                                      startedSearch={searchResults.startedSearch}/>
+                    render: () =>
+                        <SearchParticipants
+                            onAdded={this.props.onAdded}
+                            started
+                            onSearch={this.props.onSearch}
+                            results={searchResults.results}
+                            startedSearch={searchResults.startedSearch}
+                        />
                 }
             )
         }
         return panes;
-    };
-
-    onEditInternal = (participant, role) => {
-        this.props.onEdit(participant, role);
-    };
-
-    onDeleteInternal = (participant) => {
-        this.props.onDelete(participant);
-    };
-
-    searchPeople = async (searchTerm) => {
-        this.props.onSearch(searchTerm);
-    };
-
-    onAdded = (participant) => {
-        this.props.onAdded(participant);
     };
 
     render() {

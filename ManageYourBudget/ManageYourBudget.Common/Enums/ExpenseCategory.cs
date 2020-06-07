@@ -21,6 +21,7 @@ namespace ManageYourBudget.Common.Enums
         Business = 10001,
         Gift = 10002,
         Extra = 10003,
-        Loan = 10004
+        Loan = 10004,
+        All = 100000
     }
 }

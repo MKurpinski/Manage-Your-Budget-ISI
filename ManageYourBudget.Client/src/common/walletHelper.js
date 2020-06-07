@@ -61,6 +61,13 @@ const currencyToFlagMapping = {
     'GBP': 'gb'
 };
 
+const periodTypes = [
+    {key: 'Month', value: 'Month', text: 'Month'},
+    {key: 'Week', value: 'Week', text: 'Week'}
+];
+
+const allType = {key: 'All', value: '100000', text: 'All'};
+
 export default {
     categories,
     currencies,
@@ -70,14 +77,28 @@ export default {
     incomeCategories,
     defaultRole: 'Normal',
     expenseType: '0',
+    allCategory: '100000',
+    periodTypes,
     hasAllPrivileges: role => privilegesMapping[role],
     createdByMe: role => role === 'Creator',
     adminRole: role => role === 'Admin',
     currencyToFlagCode: currency => currencyToFlagMapping[currency],
+    mapStringTypeToValue: (type) => expenseTypes.find(x => x.key === type).value,
+    mapValueTypeToString: (type) => expenseTypes.find(x => x.value === type).key,
+    mapExpenseCategoryToValue: (type) => [...expenseCategories, ...incomeCategories].find(x => x.key === type).value,
+    mapValueExpenseCategoryToString: (type) => [...expenseCategories, ...incomeCategories].find(x => x.value === type).key,
     mapStringCurrencyToValue: (currency) => currencies.find(x => x.key === currency).value,
     mapValueCurrencyToString: (currency) => currencies.find(x => x.value === currency).key,
     mapStringCategoryToValue: (category) => categories.find(x => x.key === category).value,
     mapValueCategoryToString: (category) => categories.find(x => x.value === category).key,
     mapValueRoleToString: (role) => roles.find(x => x.value === role).key,
     mapStringRoleToValue: (role) => roles.find(x => x.key === role).value,
+    appendStrategy: {
+        APPEND: 'APPEND',
+        REPLACE: 'REPLACE'
+    },
+    expenseTypesSearch: [allType, ...expenseTypes],
+    expenseCategoriesSearch: [allType, ...expenseCategories],
+    incomeCategoriesSearch: [allType, ...incomeCategories],
+    allType: [allType]
 }

@@ -6,7 +6,7 @@ namespace ManageYourBudget.Common.Enums
 {
     public enum ExpenseType
     {
-        Expense,
-        Income
+        Cyclic,
+        Normal
     }
 }

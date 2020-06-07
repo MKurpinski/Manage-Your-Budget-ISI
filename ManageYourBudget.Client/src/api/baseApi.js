@@ -2,6 +2,7 @@ import axios from 'axios'
 import { constants } from '../common';
 import { BASE_URL } from '../common/constants';
 import authProvider from '../authProvider';
+import { routesConstants } from '../routing';
 
 
 const axiosConfig = () => {
@@ -12,6 +13,9 @@ const axiosConfig = () => {
                 case 401:
                     authProvider.removeToken();
                     window.location.href = '/';
+                    break;
+                case 404:
+                    window.location.href = routesConstants.NOT_FOUND;
                     break;
                 default:
                     break;

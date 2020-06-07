@@ -1,12 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="4.0.1" />
+    <PackageReference Include="Hangfire" Version="1.7.0-beta2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.1.1" />
@@ -23,6 +25,7 @@
     <ProjectReference Include="..\ManageYourBudget.Common\ManageYourBudget.Common.csproj" />
     <ProjectReference Include="..\ManageYourBudget.DataAccess\ManageYourBudget.DataAccess.csproj" />
     <ProjectReference Include="..\ManageYourBudget.EmailService\ManageYourBudget.EmailService.csproj" />
+    <ProjectReference Include="..\ManageYourBudget.Jobs\ManageYourBudget.Jobs.csproj" />
     <ProjectReference Include="..\ManageYourBudget.Options\ManageYourBudget.Options.csproj" />
   </ItemGroup>
 </Project>

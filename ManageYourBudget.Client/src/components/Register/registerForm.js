@@ -5,6 +5,7 @@ import { validators } from '../../common/index';
 import { SimpleButton, LinkAsButton } from '../common/buttons';
 import { Divider } from 'semantic-ui-react';
 import { routesConstants } from '../../routing';
+import { FORMS } from '../../common/constants';
 
 const emailRequired = validators.required('Email');
 const firstNameRequired = validators.required('FirstName');
@@ -68,7 +69,7 @@ let RegisterForm = ({error, handleSubmit, submitting, invalid}) => {
 };
 
 RegisterForm = reduxForm({
-    form: 'loginForm'
+    form: FORMS.REGISTER_FORM
 })(RegisterForm);
 
 export default RegisterForm

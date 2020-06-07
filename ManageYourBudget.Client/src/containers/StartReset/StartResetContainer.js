@@ -9,13 +9,12 @@ import StartResetForm from '../../components/StartReset/startResetForm';
 import { Card, Divider } from 'semantic-ui-react';
 import { LinkAsButton } from '../../components/common/buttons';
 import Titled from '../../components/Titled/titled';
-
-const START_RESET_FROM = 'start_reset_form';
+import { FORMS } from '../../common/constants';
 
 class StartResetContainer extends React.Component {
 
     handleSubmit = async (resetData) => {
-        this.props.dispatch(startSubmit(START_RESET_FROM));
+        this.props.dispatch(startSubmit(FORMS.START_RESET_FORM));
         try {
             await resetPasswordApi.startFlow(resetData);
             toastrService.success('We\'ve send you password reset email. Check the inbox! ');
@@ -23,7 +22,7 @@ class StartResetContainer extends React.Component {
         }
         catch (error) {
             toastrService.error('Something went wrong, try again!');
-            this.props.dispatch(stopSubmit(START_RESET_FROM));
+            this.props.dispatch(stopSubmit(FORMS.START_RESET_FORM));
         }
     };
 

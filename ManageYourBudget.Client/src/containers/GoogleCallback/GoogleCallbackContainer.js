@@ -5,6 +5,7 @@ import { toastrService } from '../../common';
 import authProvider from '../../authProvider';
 import { routesConstants } from '../../routing';
 import CustomSpiner from '../../components/common/customSpinner';
+import queryString from 'query-string';
 
 class GoogleCallbackContainer extends React.Component {
 
@@ -13,8 +14,8 @@ class GoogleCallbackContainer extends React.Component {
     }
 
     parseQueryUrl = () => {
-        const query = new URLSearchParams(this.props.location.search);
-        return {state: query.get('state'), code: query.get('code')};
+        const query = queryString.parse(this.props.location.search);
+        return {state: query.state, code: query.code};
     };
 
     googleLogin = async () => {

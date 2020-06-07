@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ManageYourBudget.BussinessLogic\ManageYourBudget.BussinessLogic.csproj" />
+    <ProjectReference Include="..\ManageYourBudget.DataAccess\ManageYourBudget.DataAccess.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>C:\Users\micha\.nuget\packages\automapper\7.0.1\lib\netcoreapp2.0\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Elasticsearch.Net">
+      <HintPath>C:\Users\micha\.nuget\packages\elasticsearch.net\6.0.0\lib\netstandard1.3\Elasticsearch.Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

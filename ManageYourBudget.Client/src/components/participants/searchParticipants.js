@@ -22,20 +22,33 @@ export default class SearchParticipants extends React.Component {
         }
     };
 
-    onAdded = (participant) => this.props.onAdded(participant);
-
     render() {
         const {results, startedSearch} = this.props;
         return (
             <div style={{height: '35vh'}}>
-                <Input style={{paddingTop: '5px', marginBottom: "5px"}} onChange={this.onChange} fluid icon='users' iconPosition='left'
-                       placeholder='Type 3 letters to start searching...'/>
+                <Input
+                    style={{paddingTop: '5px', marginBottom: '5px'}}
+                    onChange={this.onChange} fluid icon='users'
+                    iconPosition='left'
+                    placeholder='Type 3 letters to start searching...'
+                />
                 <div>
-                    <List style={{height: '32vh', overflowY: 'auto'}} divided verticalAlign='middle'>
-                        {results.map(res => <ParticipantToAdd key={res.id} onClick={this.onAdded} participant={res}/>)}
+                    <List
+                        style={{height: '32vh', overflowY: 'auto'}}
+                        divided
+                        verticalAlign='middle'
+                    >
+                        {results.map(res =>
+                            <ParticipantToAdd
+                                key={res.id}
+                                onClick={this.props.onAdded}
+                                participant={res}
+                            />)
+                        }
                     </List>
                     {startedSearch && this.state.searchTerm && results.length === 0 &&
-                    <div className="centered-row">Could not find anything :(</div>}
+                        <div className="centered-row">Could not find anything :(</div>
+                    }
                 </div>
             </div>
         )

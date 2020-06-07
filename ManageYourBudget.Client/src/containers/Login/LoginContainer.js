@@ -10,13 +10,12 @@ import { toastrService } from '../../common';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import { constants } from '../../common';
 import { IconButton, SimpleLink } from '../../components/common/buttons';
-import { Button, Card } from 'semantic-ui-react';
+import { Button, Card, Responsive } from 'semantic-ui-react';
 import { Divider } from 'semantic-ui-react';
 import './LoginContainer.css'
 import CustomSpiner from '../../components/common/customSpinner';
 import Titled from '../../components/Titled/titled';
-
-const LOGIN_FORM = 'loginForm';
+import { FORMS } from '../../common/constants';
 
 class LoginContainer extends React.Component {
     state = {
@@ -25,7 +24,7 @@ class LoginContainer extends React.Component {
 
     handleSubmit = async (loginData) => {
         this.startLoading();
-        this.props.dispatch(startSubmit(LOGIN_FORM));
+        this.props.dispatch(startSubmit(FORMS.LOGIN_FORM));
         try {
             const response = await authApi.login(loginData);
             this.handleSuccessLogin(response);
@@ -33,7 +32,7 @@ class LoginContainer extends React.Component {
         catch (error) {
             this.stopLoading();
             const response = error.response;
-            this.props.dispatch(stopSubmit(LOGIN_FORM));
+            this.props.dispatch(stopSubmit(FORMS.LOGIN_FORM));
             throw new SubmissionError(response.data.errors)
         }
     };
@@ -86,7 +85,8 @@ class LoginContainer extends React.Component {
                             </div>
                             <Divider horizontal>Or</Divider>
                             <Button.Group vertical>
-                                <FacebookLogin
+
+                                <Responsive as={FacebookLogin} {...Responsive.onlyComputer}
                                     appId={constants.FACEBOOK_APP_ID}
                                     callback={this.handleFacebookLogin}
                                     isMobile={false}

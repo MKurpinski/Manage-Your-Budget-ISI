@@ -3,6 +3,7 @@ import { Field, reduxForm } from 'redux-form'
 import ValidatedField from '../common/formInput';
 import { validators } from '../../common/index';
 import { SimpleButton } from '../common/buttons';
+import { FORMS } from '../../common/constants';
 
 const passwordRequired = validators.required('Password');
 const oldPasswordRequired = validators.required('Old password');
@@ -43,7 +44,7 @@ let ChangePasswordForm = ({error, handleSubmit, submitting, invalid}) => {
 };
 
 ChangePasswordForm = reduxForm({
-    form: 'changePasswordForm'
+    form: FORMS.CHANGE_PASSWORD_FORM
 })(ChangePasswordForm);
 
 export default ChangePasswordForm;

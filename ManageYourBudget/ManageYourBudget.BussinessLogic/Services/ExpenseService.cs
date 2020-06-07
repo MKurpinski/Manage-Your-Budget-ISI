@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using ManageYourBudget.BussinessLogic.Interfaces;
 using ManageYourBudget.Common;
-using ManageYourBudget.Common.Enums;
 using ManageYourBudget.Common.Extensions;
 using ManageYourBudget.DataAccess.Interfaces;
 using ManageYourBudget.DataAccess.Models.Expense;
@@ -21,19 +21,32 @@ namespace ManageYourBudget.BussinessLogic.Services
             _walletRepository = walletRepository;
         }
 
-        public async Task<Result> CreateExpense(ModifyExpenseDto modifyExpenseDto, string userId)
+        public async Task<Result<BaseExpenseDto>> CreateExpense(BaseModifyExpenseDto modifyExpenseDto, string userId)
         {
-            var userWallet = await _walletRepository.Get(modifyExpenseDto.WalletId.ToDeobfuscated(), userId);
-            if (userWallet == null)
+            if (!(modifyExpenseDto is ModifyExpenseDto expenseDto))
             {
-                return Result.Failure();
+                throw new ArgumentException();
             }
 
-            var mapped = Mapper.Map<Expense>(modifyExpenseDto);
+            var userWallet = await _walletRepository.Get(expenseDto.WalletId.ToDeobfuscated(), userId);
+            if (userWallet == null)
+            {
+                return Result<BaseExpenseDto>.Failure();
+            }
+
+            var mapped = Mapper.Map<Expense>(expenseDto);
             mapped.ModifiedById = userId;
             mapped.CreatedById = userId;
             await _expenseRepository.CreateExpense(mapped);
-            return mapped.Id != default ? Result.Success() : Result.Failure();
+
+            if (mapped.Id == default)
+            {
+                return Result<BaseExpenseDto>.Failure();
+            }
+
+            var addedExpense = await _expenseRepository.GetExpense(mapped.Id);
+            var addedMapped = Mapper.Map<ExpenseDto>(addedExpense);
+            return Result<BaseExpenseDto>.Success(addedMapped);
         }
 
         public async Task<Result> DeleteExpense(int expenseId, string userId)
@@ -56,8 +69,13 @@ namespace ManageYourBudget.BussinessLogic.Services
             return Result.Success();
         }
 
-        public async Task<Result> UpdateExpense(ModifyExpenseDto editExpenseDto, int expenseId, string userId)
+        public async Task<Result> UpdateExpense(BaseModifyExpenseDto editExpenseDto, int expenseId, string userId)
         {
+            if (!(editExpenseDto is ModifyExpenseDto expenseDto))
+            {
+                throw new ArgumentException();
+            }
+
             var expense = await _expenseRepository.GetExpense(expenseId);
 
             if (expense == null)
@@ -65,18 +83,18 @@ namespace ManageYourBudget.BussinessLogic.Services
                 return Result.Failure();
             }
 
-            var userWallet = await _walletRepository.Get(editExpenseDto.WalletId.ToDeobfuscated(), userId);
+            var userWallet = await _walletRepository.Get(expenseDto.WalletId.ToDeobfuscated(), userId);
 
             if (userWallet == null)
             {
                 return Result.Failure();
             }
 
-            expense.Date = editExpenseDto.Date;
-            expense.Category = editExpenseDto.Category.ToEnumValue<ExpenseCategory>();
-            expense.Name = editExpenseDto.Name;
-            expense.Place = editExpenseDto.Place;
-            expense.Price = editExpenseDto.Price;
+            expense.Date = expenseDto.Date;
+            expense.Category = expenseDto.Category;
+            expense.Name = expenseDto.Name;
+            expense.Place = expenseDto.Place;
+            expense.Price = expenseDto.Price;
             expense.ModifiedById = userId;
 
             var result = _expenseRepository.UpdateExpense(expense);

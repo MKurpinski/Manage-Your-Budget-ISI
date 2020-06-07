@@ -1,10 +1,8 @@
 import Titled from '../../components/Titled/titled';
 import React from 'react';
 import CustomSpiner from '../../components/common/customSpinner';
-import { searchApi, walletApi } from '../../api';
+import { assignmentToWalletApi, searchApi, walletApi } from '../../api';
 import { withRouter } from 'react-router';
-import { Icon, Popup } from 'semantic-ui-react';
-import DropdownMenu from '../../components/common/buttons/dropdownMenu';
 import EditWalletModal from '../../components/Wallet/editWalletModal';
 import bindActionCreators from 'redux/src/bindActionCreators';
 import profileActions from '../../actions';
@@ -13,10 +11,11 @@ import { startSubmit, stopSubmit } from 'redux-form';
 import { toastrService } from '../../common';
 import walletHelper from '../../common/walletHelper';
 import WalletParticipantsModal from '../../components/Wallet/walletPartipantsModal';
-import { assignmentToWalletApi } from '../../api';
-import ExpenseWrapper from '../../components/Expense/ExpenseWrapper';
-
-const EDIT_WALLET_FORM = 'newWalletForm';
+import ExpenseWrapper from '../../components/Expense/expenseWrapper';
+import { helpers } from '../../common/index';
+import queryString from 'query-string'
+import WalletMenu from '../../components/Menu/walletMenu';
+import { FORMS } from '../../common/constants';
 
 class WalletContainer extends React.Component {
     state = {
@@ -25,36 +24,39 @@ class WalletContainer extends React.Component {
         menuOpened: false,
         isEditModalOpened: false,
         isPartipantsModalOpened: false,
+        isCyclicExpensesModalOpened: false,
         searchResults: {
             results: [],
             startedSearch: false
-        }
+        },
+        expenses: []
     };
 
     async componentDidMount() {
         try {
             const wallet = await walletApi.get(this.props.match.params.id);
-            wallet.participants = wallet.participants.map(participant => flatten(participant));
+            wallet.participants = wallet.participants.map(participant => helpers.flatten(participant));
             this.setState({wallet, loaded: true})
         }
         catch (err) {
         }
     }
 
-    toggleEditModal = () => {
-        this.setState({isEditModalOpened: !this.state.isEditModalOpened});
+    toggleModal = (property) => {
+        return () => {
+            this.setState(prevState => {
+                return {[property]: !prevState[property]}
+            })
+        }
     };
 
-    toggleParticipantsModal = () => {
-        this.setState({isPartipantsModalOpened: !this.state.isPartipantsModalOpened});
-    };
+    toggleEditModal = this.toggleModal('isEditModalOpened');
+    toggleMenu = this.toggleModal('menuOpened');
+    toggleParticipantsModal = this.toggleModal('isPartipantsModalOpened');
+    toggleCyclicExpenseModalModal = this.toggleModal('isCyclicExpensesModalOpened');
 
     searchPeople = async (searchTerm) => {
-        const searchOptions = {
-            searchTerm
-        };
-
-        const searchResults = await searchApi.searchUsers(searchOptions);
+        const searchResults = await searchApi.searchUsers({searchTerm});
 
         searchResults.results = searchResults.results.map(member => {
             member.added = this.state.wallet.participants.some(x => x.id === member.id);
@@ -62,12 +64,17 @@ class WalletContainer extends React.Component {
         });
 
         this.setState({
-            searchResults: {...searchResults, startedSearch: true}
+            searchResults: {
+                results: searchResults.results.map(member => {
+                    return {...member, added: this.state.wallet.participants.some(x => x.id === member.id)}
+                })
+                , startedSearch: true
+            }
         });
     };
 
     handleEdit = async (editWalletData) => {
-        this.props.dispatch(startSubmit(EDIT_WALLET_FORM));
+        this.props.dispatch(startSubmit(FORMS.EDIT_WALLET_FORM));
         try {
             await walletApi.update(editWalletData, this.state.wallet.id);
             toastrService.success('Wallet modified successfully!');
@@ -86,7 +93,7 @@ class WalletContainer extends React.Component {
         }
         catch (error) {
             toastrService.error('Something went wrong. Try again!');
-            this.props.dispatch(stopSubmit(EDIT_WALLET_FORM));
+            this.props.dispatch(stopSubmit(FORMS.EDIT_WALLET_FORM));
         }
     };
 
@@ -142,7 +149,7 @@ class WalletContainer extends React.Component {
                 return {wallet: {...prevState.wallet, participants}}
             });
         }
-        catch(e) {
+        catch (e) {
             await this.setLoadingStateOnParticipant(participant, false);
         }
     };
@@ -159,17 +166,58 @@ class WalletContainer extends React.Component {
         });
     };
 
+    onExpenseAdded = (expense) => {
+        this.setState(prevState => {
+            return {
+                expenses: [expense, ...prevState.expenses]
+            }
+        });
+    };
+
+    onExpenseSearch = ({searchResults, searchParams, strategy, isInit}) => {
+        if (!isInit) {
+            this.props.history.push(`?${queryString.stringify(searchParams)}`);
+        }
+        if (strategy === walletHelper.appendStrategy.REPLACE) {
+            this.setState({expenses: searchResults})
+        }
+        else {
+            this.setState(prevState => {
+                return {
+                    expenses: [...prevState.expenses, ...searchResults]
+                }
+            })
+        }
+    };
+
+    onExpenseDelete = (expenseToDelete) => {
+        this.setState(prevState => {
+            return {
+                expenses: prevState.expenses.filter(x => x.id !== expenseToDelete.id)
+            }
+        })
+    };
+
+    onExpenseUpdated = (editedData) => {
+        editedData.price = +editedData.price;
+        this.setState(prevState => {
+            return {
+                expenses: prevState.expenses.map(expense => {
+                    return expense.id === editedData.id ? editedData : expense
+                })
+            }
+        })
+    };
 
     createMenu = () => {
-        const menu = [<div onClick={this.toggleParticipantsModal}>People</div>];
+        const menu = [
+            <div onClick={this.toggleParticipantsModal}>People</div>,
+            <div onClick={this.toggleCyclicExpenseModalModal}>Cyclic expenses</div>
+        ];
         if (walletHelper.hasAllPrivileges(this.state.wallet.role)) {
             menu.unshift(<div onClick={this.toggleEditModal}>Modify</div>)
         }
         return menu;
-    };
-
-    toggleMenu = () => {
-        this.setState({menuOpened: !this.state.menuOpened})
     };
 
     render() {
@@ -179,37 +227,46 @@ class WalletContainer extends React.Component {
             <Titled title={loaded ? wallet.name : ''}>
                 <div>
                     {loaded &&
-                    <ExpenseWrapper walletId={this.state.wallet.id} defaultCurrency={walletHelper.mapStringCurrencyToValue(wallet.defaultCurrency)}/>
-                    }
-                    <CustomSpiner active={!loaded}/>
-                    <div className="row-space-between">
-                        <h2>{wallet.name}</h2>
-                        <Popup
-                            trigger={<Icon link name="ellipsis vertical"/>}
-                            content={<DropdownMenu onClick={this.toggleMenu} options={menu}/>}
-                            on='click'
+                    <div>
+                        <WalletMenu
+                            onClick={this.toggleMenu}
+                            name={wallet.name}
+                            options={menu}
                             onOpen={this.toggleMenu}
                             onClose={this.toggleMenu}
                             open={this.state.menuOpened}
-                            position='left center'
                         />
+
+                        <ExpenseWrapper
+                            onExpenseDelete={this.onExpenseDelete}
+                            onExpenseSearch={this.onExpenseSearch}
+                            onExpenseUpdated={this.onExpenseUpdated}
+                            walletId={this.state.wallet.id}
+                            onAdded={this.onExpenseAdded}
+                            expenses={this.state.expenses}
+                            isCyclicExpensesModalOpened={this.state.isCyclicExpensesModalOpened}
+                            toggleCyclicExpenseModal={this.toggleCyclicExpenseModalModal}
+                            defaultCurrency={walletHelper.mapStringCurrencyToValue(wallet.defaultCurrency)}/>
+
+                        <EditWalletModal
+                            onSave={this.handleEdit}
+                            isOpen={isEditModalOpened}
+                            onClose={this.toggleEditModal}
+                            wallet={wallet}/>
+
+                        <WalletParticipantsModal
+                            onEdit={this.editParticipant}
+                            hasAllPrivileges={walletHelper.hasAllPrivileges(this.state.wallet.role)}
+                            participants={wallet.participants}
+                            onDelete={this.onAdded}
+                            searchResults={searchResults}
+                            onSearch={this.searchPeople}
+                            onAdded={this.onAdded}
+                            isOpen={isPartipantsModalOpened}
+                            onClose={this.toggleParticipantsModal}/>
                     </div>
-                    {loaded &&
-                    <EditWalletModal onSave={this.handleEdit} isOpen={isEditModalOpened} onClose={this.toggleEditModal}
-                                     wallet={wallet}/>
                     }
-                    {loaded &&
-                    <WalletParticipantsModal
-                        onEdit={this.editParticipant}
-                        hasAllPrivileges={walletHelper.hasAllPrivileges(this.state.wallet.role)}
-                        participants={wallet.participants}
-                        onDelete={this.onAdded}
-                        searchResults={searchResults}
-                        onSearch={this.searchPeople}
-                        onAdded={this.onAdded}
-                        isOpen={isPartipantsModalOpened}
-                        onClose={this.toggleParticipantsModal}/>
-                    }
+                    <CustomSpiner active={!loaded}/>
                 </div>
             </Titled>
         )
@@ -218,16 +275,6 @@ class WalletContainer extends React.Component {
 
 const mapDispatchToProps = dispatch => {
     return {actions: bindActionCreators(profileActions, dispatch), dispatch};
-};
-
-const flatten = object => {
-    return Object.assign({}, ...function flattenInternal(objToFlatten) {
-        return [].concat(
-            ...Object.keys(objToFlatten).map(
-                key => typeof objToFlatten[key] === 'object' ? flattenInternal(objToFlatten[key], key) : ({[key]: objToFlatten[key]})
-            )
-        )
-    }(object));
 };
 
 export default connect(null, mapDispatchToProps)(withRouter(WalletContainer))

@@ -7,8 +7,11 @@ namespace ManageYourBudget.Dtos.ValidationAttributes
     {
         public DateSmallerThanNowAttribute()
         {
-            ErrorMessage = $"Date must be earlier than {DateTime.UtcNow}";
+            SmallerThan = DateTime.UtcNow;
+            ErrorMessage = $"Date must be earlier than {SmallerThan}";
         }
+
+        public DateTime SmallerThan { get; }
 
         public override bool IsValid(object value)
         {
@@ -16,7 +19,7 @@ namespace ManageYourBudget.Dtos.ValidationAttributes
             {
                 return false;
             }
-            var difference = DateTime.UtcNow - date;
+            var difference = SmallerThan - date;
             return difference.Days >= 0;
         }
     }

@@ -7,6 +7,7 @@ import DropdownField from '../common/formDropdown';
 import { Grid } from 'semantic-ui-react';
 import { walletHelper } from '../../common';
 import { connect } from 'react-redux';
+import { FORMS } from '../../common/constants';
 
 const nameRequired = validators.required('Name');
 const categoryRequired = validators.required('Category');
@@ -53,14 +54,14 @@ let NewWalletForm = ({handleSubmit, submitting, invalid, initialValues, current,
 };
 
 NewWalletForm = reduxForm({
-    form: 'newWalletForm',
+    form: FORMS.NEW_WALLET_FORM,
     enableReinitialize: true
 })(NewWalletForm);
 
 const mapStateToProps = (state, ownProps) => {
     return {
         initialValues: ownProps.initialValues ? ownProps.initialValues : {},
-        current: getFormValues('newWalletForm')(state)
+        current: getFormValues(FORMS.NEW_WALLET_FORM)(state)
     }
 };
 

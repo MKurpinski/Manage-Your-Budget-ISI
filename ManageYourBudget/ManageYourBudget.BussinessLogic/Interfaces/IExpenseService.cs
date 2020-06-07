@@ -6,8 +6,8 @@ namespace ManageYourBudget.BussinessLogic.Interfaces
 {
     public interface IExpenseService: IService
     {
-        Task<Result> CreateExpense(ModifyExpenseDto modifyExpenseDto, string userId);
+        Task<Result<BaseExpenseDto>> CreateExpense(BaseModifyExpenseDto modifyExpenseDto, string userId);
         Task<Result> DeleteExpense(int expenseId, string userId);
-        Task<Result> UpdateExpense(ModifyExpenseDto editExpenseDto, int expenseId, string userId);
+        Task<Result> UpdateExpense(BaseModifyExpenseDto editExpenseDto, int expenseId, string userId);
     }
 }

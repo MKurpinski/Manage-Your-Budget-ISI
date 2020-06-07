@@ -11,15 +11,13 @@ import CustomSpinner from '../../components/common/customSpinner';
 import Titled from '../../components/Titled/titled';
 import ChangePasswordForm from '../../components/Profile/changePasswordForm';
 import AddPasswordForm from '../../components/Profile/addPasswordForm';
+import { FORMS } from '../../common/constants';
 
-const PROFILE_FORM = 'profileForm';
-const CHANGE_PASSWORD_FORM = 'changePasswordForm';
-const ADD_PASSWORD_FORM = 'addPasswordForm';
 
 class ProfileContainer extends React.Component {
 
     savePersonalInfo = async (personalInfoData) => {
-        this.props.dispatch(startSubmit(PROFILE_FORM));
+        this.props.dispatch(startSubmit(FORMS.PROFILE_FORM));
         try {
             await profileApi.changeProfileInfo(personalInfoData);
             toastrService.success('You have successfully changed the data!');
@@ -27,24 +25,24 @@ class ProfileContainer extends React.Component {
         }
         catch (error) {
             toastrService.error('Something went wrong. Try again!');
-            this.props.dispatch(stopSubmit(PROFILE_FORM));
+            this.props.dispatch(stopSubmit(FORMS.PROFILE_FORM));
         }
     };
 
     changePassword = async (changePasswordData) => {
-        this.props.dispatch(startSubmit(CHANGE_PASSWORD_FORM));
+        this.props.dispatch(startSubmit(FORMS.CHANGE_PASSWORD_FORM));
         try {
             await profileApi.changePassword(changePasswordData);
             toastrService.success('You have successfully changed password!');
         }
         catch (error) {
             toastrService.error('Your old password is not correct.');
-            this.props.dispatch(stopSubmit(PROFILE_FORM));
+            this.props.dispatch(stopSubmit(FORMS.CHANGE_PASSWORD_FORM));
         }
     };
 
     addPassword = async (addPasswordData) => {
-        this.props.dispatch(startSubmit(ADD_PASSWORD_FORM));
+        this.props.dispatch(startSubmit(FORMS.ADD_PASSWORD_FORM));
         try {
             await profileApi.addPassword(addPasswordData);
             toastrService.success('You have successfully created local account!');
@@ -52,7 +50,7 @@ class ProfileContainer extends React.Component {
         }
         catch (error) {
             toastrService.error('Something went wrong. Try again!');
-            this.props.dispatch(stopSubmit(PROFILE_FORM));
+            this.props.dispatch(stopSubmit(FORMS.ADD_PASSWORD_FORM));
         }
     };
 

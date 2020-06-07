@@ -3,6 +3,7 @@ import { Field, reduxForm } from 'redux-form'
 import ValidatedField from '../common/formInput';
 import { validators } from '../../common/index';
 import {SimpleButton} from '../common/buttons';
+import { FORMS } from '../../common/constants';
 
 const passwordRequired = validators.required('Password');
 const comparePasswords = validators.compare('Confirm password', 'password', 'password');
@@ -34,7 +35,7 @@ let ResetForm = ({error, handleSubmit, submitting, invalid}) => {
 };
 
 ResetForm = reduxForm({
-    form: 'resetForm'
+    form: FORMS.RESET_FORM
 })(ResetForm);
 
 export default ResetForm;

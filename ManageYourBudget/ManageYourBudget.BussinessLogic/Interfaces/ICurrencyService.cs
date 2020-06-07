@@ -10,5 +10,6 @@ namespace ManageYourBudget.BussinessLogic.Interfaces
         Task<CurrencyRateDto> GetCurrencyRate(string baseCurrency, string toCurrency);
 
         Task<CurrencyRateDto> GetCurrencyRate(SupportedCurrencies baseCurrency, SupportedCurrencies toCurrency);
+        Task FillCacheWithRates();
     }
 }

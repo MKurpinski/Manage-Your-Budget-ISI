@@ -7,8 +7,9 @@ import { withRouter } from 'react-router-dom';
 import NewWalletForm from '../../components/Wallet/newWalletForm';
 import { connect } from 'react-redux';
 import routesConstants from '../../routing/routesConstants';
+import { FORMS } from '../../common/constants';
 
-const NEW_WALLET_FORM = 'newWalletForm';
+const NEW_WALLET_FORM = FORMS.NEW_WALLET_FORM;
 
 class NewWalletContainer extends React.Component {
 
@@ -36,6 +37,5 @@ class NewWalletContainer extends React.Component {
         )
     }
 }
-
 
 export default connect()(withRouter(NewWalletContainer));

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ManageYourBudget.BussinessLogic.ExternalAbstractions;
 using ManageYourBudget.BussinessLogic.Interfaces;
@@ -28,18 +29,32 @@ namespace ManageYourBudget.BussinessLogic.Services
         {
 
             var key = $"{baseCurrency}-{toCurrency}";
-            //var fromCache = await _cacheService.Get<CurrencyRateDto>(key);
-            //if (fromCache != null)
-            //{
-            //   return fromCache;
-            //}
+            var fromCache = await _cacheService.Get<CurrencyRateDto>(key);
+            if (fromCache != null)
+            {
+               return fromCache;
+            }
 
             var result = await _exchangeClient.GetExchangeRate(baseCurrency, toCurrency);
             if (result != null)
             {
-                //await _cacheService.Set(key, result);
+                await _cacheService.Set(key, result);
             }
             return result;
+        }
+
+        public async Task FillCacheWithRates()
+        {
+            var allValues = Enum.GetValues(typeof(SupportedCurrencies)).Cast<SupportedCurrencies>().Select(x => x.ToString()).ToList();
+            string key;
+            CurrencyRateDto result;
+
+            foreach (var pair in allValues.SelectMany(x => allValues, (From, To) => new { From, To }))
+            {
+                key = $"{pair.From}-{pair.To}";
+                result = await _exchangeClient.GetExchangeRate(pair.From, pair.To);
+                await _cacheService.Set(key, result, TimeSpan.FromHours(3));
+            }
         }
     }
 }

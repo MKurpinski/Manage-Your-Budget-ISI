@@ -1,6 +1,7 @@
 ﻿using System;
 using ManageYourBudget.Api.Attributes;
 using ManageYourBudget.Configuration;
+using ManageYourBudget.Jobs;
 using ManageYourBudget.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,6 +39,7 @@ namespace ManageYourBudget.Api
             services.EnableMapping();
             services.EnableRabbitMq(Configuration);
             services.EnableDistrubutedMemoryCache(Configuration);
+            services.EnableSchedulableJobs(Configuration);
             return DependencyInjectionConfiguration.Configure(services);
         }
 
@@ -48,6 +50,7 @@ namespace ManageYourBudget.Api
             app.UseConfiguredAuth();
             app.UseHttpsRedirection();
             loggerFactory.EnableSerilog();
+            app.UseSchedulableJobs();
             app.UseMvc();
         }
 

@@ -8,13 +8,12 @@ import RegisterForm from '../../components/Register/registerForm';
 import { toastrService } from '../../common';
 import { Card } from 'semantic-ui-react';
 import Titled from '../../components/Titled/titled';
-
-const REGISTER_FORM = 'registerForm';
+import { FORMS } from '../../common/constants';
 
 class RegisterContainer extends React.Component {
 
     handleSubmit = async (registerData) => {
-        this.props.dispatch(startSubmit(REGISTER_FORM));
+        this.props.dispatch(startSubmit(FORMS.REGISTER_FORM));
         try {
             await authApi.register(registerData);
             toastrService.success('You have successfully registered! Log in to app!');
@@ -22,7 +21,7 @@ class RegisterContainer extends React.Component {
         }
         catch (error) {
             const response = error.response;
-            this.props.dispatch(stopSubmit(REGISTER_FORM));
+            this.props.dispatch(stopSubmit(FORMS.REGISTER_FORM));
             throw new SubmissionError(response.data.errors)
         }
     };

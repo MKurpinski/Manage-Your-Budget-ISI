@@ -7,5 +7,6 @@ export default {
     GOOGLE: '/google',
     PROFILE: '/main/profile',
     WALLET: '/main/wallet',
-    FIRST_WALLET: '/main/start'
+    FIRST_WALLET: '/main/start',
+    NOT_FOUND:'/not-found'
 }

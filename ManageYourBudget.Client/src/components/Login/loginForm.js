@@ -4,6 +4,7 @@ import ValidatedField from '../common/formInput';
 import { validators } from '../../common/index';
 import { SimpleButton } from '../common/buttons';
 import { Message } from 'semantic-ui-react';
+import { FORMS } from '../../common/constants';
 
 const emailRequired = validators.required('Email');
 const passwordRequired = validators.required('Password');
@@ -36,7 +37,7 @@ let LoginForm = ({error, handleSubmit, submitting, invalid}) => {
 };
 
 LoginForm = reduxForm({
-    form: 'loginForm'
+    form: FORMS.LOGIN_FORM
 })(LoginForm);
 
 export default LoginForm

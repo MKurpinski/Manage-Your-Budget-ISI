@@ -15,7 +15,7 @@ namespace ManageYourBudget.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
+                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -87,6 +87,8 @@ namespace ManageYourBudget.DataAccess.Migrations
                     b.Property<string>("Place");
 
                     b.Property<decimal>("Price");
+
+                    b.Property<int>("Type");
 
                     b.Property<int>("WalletId");
 

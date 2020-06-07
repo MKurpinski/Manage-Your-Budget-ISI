@@ -4,6 +4,7 @@ import ValidatedField from '../common/formInput';
 import { validators } from '../../common/index';
 import SimpleButton from '../common/buttons/simpleButton';
 import { connect } from 'react-redux';
+import { FORMS } from '../../common/constants';
 
 const firstNameRequired = validators.required('FirstName');
 const lastNameRequired = validators.required('LastName');
@@ -47,12 +48,12 @@ let ProfileForm = ({error, handleSubmit, submitting, invalid, user, current}) =>
 const mapStateToProps = (state, ownProps) => {
     return {
         initialValues: ownProps.initial,
-        current: getFormValues('profileForm')(state)
+        current: getFormValues(FORMS.PROFILE_FORM)(state)
     }
 };
 
 ProfileForm = reduxForm({
-    form: 'profileForm',
+    form: FORMS.PROFILE_FORM,
     enableReinitialize: true
 })(ProfileForm);
 

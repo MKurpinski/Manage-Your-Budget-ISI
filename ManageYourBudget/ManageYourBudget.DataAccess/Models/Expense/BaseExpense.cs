@@ -9,6 +9,7 @@ namespace ManageYourBudget.DataAccess.Models.Expense
         public string Place { get; set; }
         public decimal Price { get; set; }
         public ExpenseCategory Category { get; set; }
+        public BalanceType Type { get; set; }
         public Wallet Wallet { get; set; }
         public int WalletId { get; set; }
         public string ModifiedById { get; set; }

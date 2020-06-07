@@ -39,7 +39,7 @@ namespace ManageYourBudget.BussinessLogic.Services
             var entry = await _cache.GetAsync(key);
             if (entry == null || entry.Length == 0)
             {
-                return default(T);
+                return default;
             }
             using (var ms = new MemoryStream(entry))
             {
@@ -48,14 +48,19 @@ namespace ManageYourBudget.BussinessLogic.Services
             }
         }
 
-        public async Task Set<T>(string key, T value)
+        public async Task Set<T>(string key, T value, TimeSpan expirationTime = default)
         {
+            if (expirationTime == default)
+            {
+                expirationTime = TimeSpan.FromHours(1);
+            }
+
             using (var stream = new MemoryStream())
             {
                 IFormatter formatter = new BinaryFormatter();
                 formatter.Serialize(stream, value);
                 var cacheEntryOptions = new DistributedCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromHours(1));
+                    .SetSlidingExpiration(expirationTime);
                 await _cache.SetAsync(key, stream.ToArray(), cacheEntryOptions);
             }
         }

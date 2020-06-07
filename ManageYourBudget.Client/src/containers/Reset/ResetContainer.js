@@ -10,8 +10,7 @@ import ResetForm from '../../components/Reset/resetForm';
 import CustomSpiner from '../../components/common/customSpinner';
 import { Card } from 'semantic-ui-react';
 import Titled from '../../components/Titled/titled';
-
-const RESET_FORM = 'resetForm';
+import { FORMS } from '../../common/constants';
 
 class ResetContainer extends React.Component {
     state = {
@@ -37,7 +36,7 @@ class ResetContainer extends React.Component {
 
     handleSubmit = async (resetData) => {
         resetData = {...resetData, hash: this.state.hash};
-        this.props.dispatch(startSubmit(RESET_FORM));
+        this.props.dispatch(startSubmit(FORMS.RESET_FORM));
         try {
             await resetPasswordApi.reset(resetData);
             toastrService.success('You have successfully changed the password! Log in to app!');
@@ -45,7 +44,7 @@ class ResetContainer extends React.Component {
         }
         catch (error) {
             toastrService.error('Something went wrong! Try again!');
-            this.props.dispatch(stopSubmit(RESET_FORM));
+            this.props.dispatch(stopSubmit(FORMS.RESET_FORM));
         }
     };
 

@@ -10,22 +10,27 @@ import { connect } from 'react-redux';
 import DatepickerFormField from '../common/datepickerFormField';
 import helpers from '../../common/helpers';
 import { bindActionCreators } from 'redux';
+import moment from 'moment';
+import { FORMS } from '../../common/constants';
 
 const nameRequired = validators.required('Name');
 const dateRequired = validators.required('Date');
 const valueRequired = validators.required('Value');
 const valueBiggerThan = validators.biggerThan('Value', 0);
 const rateBiggerThan = validators.biggerThan('Rate', 0);
+const rateRequired = validators.required('Rate');
 
-let ModifyExpenseForm = ({handleSubmit, submitting, invalid, initialValues, current, isEdit, downloadCurrency, change}) => {
+let ModifyExpenseForm = ({handleSubmit, submitting, invalid, initialValues, current, isEdit, downloadCurrency, change, isCyclic}) => {
     const dataNotChanged = isEdit && JSON.stringify(initialValues) === JSON.stringify(current);
 
     const setFirstCategory = (value) => {
-        const categories = (value === walletHelper.expenseType) ? walletHelper.expenseCategories :walletHelper.incomeCategories;
-        if(!categories.filter(x => x.value === current.category).length){
+        const categories = (value === walletHelper.expenseType) ? walletHelper.expenseCategories : walletHelper.incomeCategories;
+        if (!categories.filter(x => x.value === current.category).length) {
             change('category', categories[0].value);
         }
     };
+
+    const blockStartingFromDate = isCyclic && isEdit && moment(initialValues.startingFrom).startOf('day').isBefore(moment().startOf('day'));
 
     return (
         <form onSubmit={handleSubmit} style={{minWidth: '70%'}}>
@@ -37,7 +42,7 @@ let ModifyExpenseForm = ({handleSubmit, submitting, invalid, initialValues, curr
                 validate={[nameRequired]}
             />
             <Grid>
-                <Grid.Column width={8}>
+                <Grid.Column width={isCyclic ? 16 : 8}>
                     <Field
                         name="place"
                         component={ValidatedField}
@@ -45,14 +50,17 @@ let ModifyExpenseForm = ({handleSubmit, submitting, invalid, initialValues, curr
                         label="Place"
                     />
                 </Grid.Column>
+                {!isCyclic &&
                 <Grid.Column width={8}>
                     <Field name="date"
                            placeholder="Choose date.."
                            component={DatepickerFormField}
+                           maxDate={moment()}
                            validate={[dateRequired]}
                            label="Date"
                     />
                 </Grid.Column>
+                }
                 <Grid.Column width={5}>
                     <Field
                         name="price"
@@ -78,7 +86,7 @@ let ModifyExpenseForm = ({handleSubmit, submitting, invalid, initialValues, curr
                            component={ValidatedField}
                            type="number"
                            prepareValue={helpers.parseToNumberOfDecimalPoints(2)}
-                           validate={[rateBiggerThan]}
+                           validate={[rateRequired, rateBiggerThan]}
                            label={
                                <div>Rate <Popup trigger={<Icon name='info circle'/>}
                                                 content={`Exchange rate between default currency of wallet (${walletHelper.mapValueCurrencyToString(initialValues.currency)}) and currently chosen one`}/>
@@ -88,7 +96,7 @@ let ModifyExpenseForm = ({handleSubmit, submitting, invalid, initialValues, curr
                 </Grid.Column>
                 <Grid.Column width={8}>
                     <Field name="category"
-                           options={(current && current.type !== walletHelper.expenseType) ? walletHelper.incomeCategories :walletHelper.expenseCategories }
+                           options={(current && current.type !== walletHelper.expenseType) ? walletHelper.incomeCategories : walletHelper.expenseCategories}
                            component={DropdownField}
                            label="Category"
                     />
@@ -101,6 +109,27 @@ let ModifyExpenseForm = ({handleSubmit, submitting, invalid, initialValues, curr
                            customOnChange={setFirstCategory}
                     />
                 </Grid.Column>
+                {isCyclic &&
+                <Grid.Column width={8}>
+                    <Field name="startingFrom"
+                           placeholder="Choose date.."
+                           component={DatepickerFormField}
+                           minDate={moment()}
+                           disabled={blockStartingFromDate}
+                           validate={[dateRequired]}
+                           label="Starting from"
+                    />
+                </Grid.Column>
+                }
+                {isCyclic &&
+                <Grid.Column width={8}>
+                    <Field name="periodType"
+                           options={walletHelper.periodTypes}
+                           component={DropdownField}
+                           label="Every"
+                    />
+                </Grid.Column>
+                }
             </Grid>
             <SimpleButton className="fluid primary" disabled={invalid || submitting || dataNotChanged}>
                 Confirm
@@ -110,14 +139,14 @@ let ModifyExpenseForm = ({handleSubmit, submitting, invalid, initialValues, curr
 };
 
 ModifyExpenseForm = reduxForm({
-    form: 'modifyExpenseForm',
+    form: FORMS.MODIFY_EXPENSE_FORM,
     enableReinitialize: true
 })(ModifyExpenseForm);
 
 const mapStateToProps = (state, ownProps) => {
     return {
         initialValues: ownProps.initialValues ? ownProps.initialValues : {},
-        current: getFormValues('modifyExpenseForm')(state)
+        current: getFormValues(FORMS.MODIFY_EXPENSE_FORM)(state)
     }
 };
 

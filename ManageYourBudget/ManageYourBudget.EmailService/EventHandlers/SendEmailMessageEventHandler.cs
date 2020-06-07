@@ -10,6 +10,7 @@ namespace ManageYourBudget.EmailService.EventHandlers
     public class SendMessageEventHandler : IEventHandler<ISendEmailEvent>
     {
         private IFluentEmail _client;
+        private static readonly Assembly _assembly = typeof(SendMessageEventHandler).GetTypeInfo().Assembly;
 
         public SendMessageEventHandler(IFluentEmail client)
         {
@@ -26,7 +27,7 @@ namespace ManageYourBudget.EmailService.EventHandlers
                 }
                 _client.To(message.To).Subject(message.Subject).UsingTemplateFromEmbedded(
                     $"ManageYourBudget.EmailService.Views.{message.Type}.cshtml", message,
-                    GetType().GetTypeInfo().Assembly).Send();
+                    _assembly).Send();
             });
         }
     }

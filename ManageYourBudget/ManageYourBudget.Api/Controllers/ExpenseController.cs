@@ -1,7 +1,13 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
+using ManageYourBudget.BussinessLogic.Factories;
 using ManageYourBudget.BussinessLogic.Interfaces;
+using ManageYourBudget.BussinessLogic.Services;
+using ManageYourBudget.Common.Enums;
+using ManageYourBudget.Common.Extensions;
 using ManageYourBudget.Dtos.Expense;
+using ManageYourBudget.Dtos.Search;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManageYourBudget.Api.Controllers
@@ -10,14 +16,16 @@ namespace ManageYourBudget.Api.Controllers
     public class ExpenseController: BaseController
     {
         private readonly IExpenseService _expenseService;
+        private readonly IExpenseSearchService _expenseSearchService;
 
-        public ExpenseController(IExpenseService expenseService)
+        public ExpenseController(IExpenseServiceFactory expenseServiceFactory, IExpenseSearchService expenseSearchService)
         {
-            _expenseService = expenseService;
+            _expenseService = expenseServiceFactory.Create(ExpenseType.Normal);
+            _expenseSearchService = expenseSearchService;
         }
 
         [HttpPost]
-        [ProducesResponseType((int) HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ExpenseDto), (int) HttpStatusCode.OK)]
         [ProducesResponseType((int) HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CreateNew([FromBody] ModifyExpenseDto modifyExpenseDto)
         {
@@ -27,7 +35,7 @@ namespace ManageYourBudget.Api.Controllers
                 return BadRequest();
             }
 
-            return NoContent();
+            return Ok(result.Value);
         }
 
         [HttpPut("{expenseId}")]
@@ -56,6 +64,16 @@ namespace ManageYourBudget.Api.Controllers
             }
 
             return NoContent();
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(PagedSearchResults<ExpenseDto>),(int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Search([FromQuery] ExpenseSearchOptionsDto searchOptions)
+        {
+            searchOptions.DateFrom = searchOptions.DateFrom.StartOfDay();
+            searchOptions.DateTo = searchOptions.DateTo.EndOfDay();
+            var result = await _expenseSearchService.Search(searchOptions, UserId);
+            return Ok(result);
         }
     }
 }

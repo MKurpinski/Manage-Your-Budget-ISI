@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.2.0" />
     <PackageReference Include="AutoMapper" Version="7.0.1" />
     <PackageReference Include="IdentityModel" Version="2.0.1" />
     <PackageReference Include="RawRabbit.Operations.Publish" Version="2.0.0-rc5" />

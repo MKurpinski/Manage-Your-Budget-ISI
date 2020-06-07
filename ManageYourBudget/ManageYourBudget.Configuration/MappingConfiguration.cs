@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AutoMapper;
+using ManageYourBudget.Common;
 using ManageYourBudget.Common.Enums;
 using ManageYourBudget.Common.Extensions;
 using ManageYourBudget.DataAccess.Models;
@@ -9,9 +11,7 @@ using ManageYourBudget.Dtos.Auth.LoginDataProvider;
 using ManageYourBudget.Dtos.Expense;
 using ManageYourBudget.Dtos.Profile;
 using ManageYourBudget.Dtos.Wallet;
-using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.Extensions.DependencyInjection;
-using RabbitMQ.Client.MessagePatterns;
 using Profile = ManageYourBudget.Common.Constants.Profile;
 
 namespace ManageYourBudget.Configuration
@@ -69,13 +69,51 @@ namespace ManageYourBudget.Configuration
                         opts => opts.MapFrom(src =>
                             src.Wallet.UserWallets.Where(x => x.UserId != src.UserId)));
 
-                opt.CreateMap<ModifyExpenseDto, Expense>()
+                opt.CreateMap<BaseModifyExpenseDto, Expense>()
                     .ForMember(dest => dest.WalletId,
-                        opts => opts.MapFrom(src => src.WalletId.ToDeobfuscated()))
-                    .ForMember(dest => dest.Category,
-                        opts => opts.MapFrom(src => src.Category.ToEnumValue<ExpenseCategory>()));
-            });
+                        opts => opts.MapFrom(src => src.WalletId.ToDeobfuscated()));
 
+                opt.CreateMap<BaseModifyExpenseDto, CyclicExpense>()
+                    .ForMember(dest => dest.WalletId,
+                        opts => opts.MapFrom(src => src.WalletId.ToDeobfuscated()));
+
+
+                opt.CreateMap<ModifyExpenseDto, Expense>()
+                    .IncludeBase<BaseModifyExpenseDto, Expense>();
+
+                opt.CreateMap<AddCyclicExpenseDto, CyclicExpense>()
+                    .IncludeBase<BaseModifyExpenseDto, CyclicExpense>();
+
+
+                opt.CreateMap<ExpenseSearchResult, ExpenseDto>()
+                    .ForMember(dest => dest.Category,
+                        opts => opts.MapFrom(src => src.Category.GetStringValue()))
+                    .ForMember(dest => dest.Type,
+                        opts => opts.MapFrom(src => src.Type.GetStringValue()));
+
+                opt.CreateMap<Expense, ExpenseDto>()
+                    .ForMember(dest => dest.Category,
+                        opts => opts.MapFrom(src => src.Category.GetStringValue()))
+                    .ForMember(dest => dest.Type,
+                        opts => opts.MapFrom(src => src.Type.GetStringValue()));
+
+                opt.CreateMap<CyclicExpense, Expense>()
+                    .ForMember(dest => dest.CyclicExpenseId,
+                        opts => opts.MapFrom(src => src.Id));
+
+                opt.CreateMap<CyclicExpense, CyclicExpenseDto>()
+                    .ForMember(dest => dest.Category,
+                        opts => opts.MapFrom(src => src.Category.GetStringValue()))
+                    .ForMember(dest => dest.Type,
+                        opts => opts.MapFrom(src => src.Type.GetStringValue()))
+                    .ForMember(dest => dest.PeriodType,
+                    opts => opts.MapFrom(src => src.PeriodType.GetStringValue()))
+                    .ForMember(dest => dest.NextApplyingDate, opts => opts.MapFrom(src => 
+                            src.StartingFrom.Date >= DateTime.UtcNow.Date || src.LastApplied == default
+                            ? src.StartingFrom
+                            : DateTimeCalculator.GetNextApplyingDate(src.LastApplied, src.PeriodType)
+                    ));
+            });
         }
     }
 }

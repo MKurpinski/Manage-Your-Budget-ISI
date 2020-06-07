@@ -3,6 +3,7 @@ import { Field, reduxForm } from 'redux-form'
 import ValidatedField from '../common/formInput';
 import { validators } from '../../common/index';
 import {SimpleButton} from '../common/buttons';
+import { FORMS } from '../../common/constants';
 
 const emailRequired = validators.required('Email');
 
@@ -25,7 +26,7 @@ let StartResetForm = ({handleSubmit, submitting, invalid}) => {
 };
 
 StartResetForm = reduxForm({
-    form: 'startResetForm'
+    form: FORMS.START_RESET_FORM
 })(StartResetForm);
 
 export default StartResetForm

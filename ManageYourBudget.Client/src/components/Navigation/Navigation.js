@@ -9,8 +9,6 @@ import { authApi } from '../../api';
 import authProvider from '../../authProvider';
 import { withRouter } from 'react-router-dom';
 
-const TABLET_WIDTH = 800;
-
 const NavBarMobile = ({onPusherClick, onToggle, visible, onLogout, user, children}) => (
     <Sidebar.Pushable>
         <Sidebar
@@ -120,7 +118,7 @@ class NavBar extends Component {
 
         return (
             <div className="navigation">
-                <Responsive maxWidth={TABLET_WIDTH}>
+                <Responsive maxWidth={Responsive.onlyTablet.minWidth}>
                     <NavBarMobile
                         onPusherClick={this.handlePusherClick}
                         onToggle={this.handleToggle}
@@ -133,7 +131,7 @@ class NavBar extends Component {
                         </div>
                     </NavBarMobile>
                 </Responsive>
-                <Responsive minWidth={TABLET_WIDTH}>
+                <Responsive minWidth={Responsive.onlyTablet.minWidth}>
                     <NavBarDesktop user={this.props.user} onLogout={this.onLogout}/>
                     <div style={{minHeight: '90vh'}}>
                         {this.props.children}
